@@ -1,28 +1,117 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>GeoGebra</title>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background-color: #fff;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>GeoGebra Rechner</title>
+<style>
+  /* Diese CSS-Regeln sorgen dafuer, dass der Rechner den ganzen
+     Bildschirm ausfuellt, genau wie die native App. Wenn Du den
+     Rechner nur in einem Teil Deiner Seite anzeigen willst, kannst
+     Du html/body weglassen und dem #ggb-calculator-container
+     stattdessen eine feste Breite/Hoehe geben. */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #fff;
+  }
+  #ggb-calculator-container {
+    width: 100%;
+    height: 100%;
+  }
+</style>
 </head>
 <body>
-    <iframe src="https://www.geogebra.org/calculator"></iframe>
+
+<!-- ============================================================
+     AB HIER: Das ist der Teil, den Du in Deine eigene Website
+     kopieren kannst (Container-Div + zwei Script-Bloecke).
+     ============================================================ -->
+
+<div id="ggb-calculator-container"></div>
+
+<!-- Laedt die offizielle GeoGebra Apps API (nur das JS-Ladeskript,
+     keine fertige Seite - dadurch bekommst Du KEINE "Webversion"
+     mit Menueleiste etc., sondern nur die App-Engine, die Du selbst
+     konfigurierst). -->
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+
+<script>
+(function () {
+  var container = document.getElementById('ggb-calculator-container');
+
+  var params = {
+    // "suite" = GeoGebra Calculator Suite, exakt die App, die auch im
+    // iOS App Store als "GeoGebra Rechner" / "GeoGebra Calculator"
+    // angeboten wird (Grafik, Geometrie, 3D, Tabelle, CAS in einer
+    // schlanken Oberflaeche). NICHT appName "classic" verwenden -
+    // das waere die Desktop-Oberflaeche mit klassischer Menueleiste.
+    appName: 'suite',
+
+    width: container.clientWidth,
+    height: container.clientHeight,
+
+    // Passt Groesse automatisch an den Container an (Fenster-Resize,
+    // Rotation auf Mobilgeraeten).
+    scale: 1,
+    disableAutoScale: false,
+    allowUpscale: true,
+
+    // Keine klassische Desktop-Menueleiste -> App-artige Optik.
+    showMenuBar: false,
+
+    // Werkzeugleiste + Eingabezeile bleiben an, genau wie in der App.
+    showToolBar: true,
+    showToolBarHelp: false,
+    showAlgebraInput: true,
+    showResetIcon: true,
+    allowStyleBar: true,
+
+    // App-typisches Verhalten.
+    enableShiftDragZoom: true,
+    enableFileFeatures: false,   // kein "Datei oeffnen/speichern" wie in Classic
+    enableRightClick: false,
+    showZoomButtons: true,
+    capturingThreshold: null,
+
+    // Sprache der Oberflaeche (Deutsch). ISO-Code anpassen falls noetig.
+    language: 'de',
+    country: 'DE',
+
+    // Rand/Look
+    borderColor: null,
+    buttonShadows: true,
+    buttonRounding: 0.7,
+    buttonOpacity: 1,
+
+    useBrowserForJS: false,
+    appletOnLoad: function () {
+      console.log('GeoGebra Calculator Suite geladen.');
+    }
+  };
+
+  var ggbApp = new GGBApplet(params, true);
+
+  window.addEventListener('load', function () {
+    ggbApp.inject('ggb-calculator-container');
+  });
+
+  // Bei Fenstergroessenaenderung (z.B. Handy-Drehung) die Applet-
+  // Groesse an den Container anpassen, damit es sich wie eine native
+  // App verhaelt statt wie eine starre eingebettete Webseite.
+  window.addEventListener('resize', function () {
+    if (window.ggbApplet) {
+      window.ggbApplet.setSize(container.clientWidth, container.clientHeight);
+    }
+  });
+})();
+</script>
+
+<!-- ============================================================
+     ENDE des Teils zum Kopieren.
+     ============================================================ -->
+
 </body>
 </html>
