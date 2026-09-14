@@ -59,7 +59,10 @@
     disableAutoScale: false,
     allowUpscale: true,
 
-    // Keine klassische Desktop-Menueleiste -> App-artige Optik.
+    // In appName "suite" erzeugt showMenuBar NICHT die klassische
+    // Desktop-Menueleiste, sondern genau das Hamburger-Icon (drei
+    // Striche) oben, ueber das man an Einstellungen/Optionen kommt -
+    // wie in der App. Deshalb hier true.
     showMenuBar: true,
 
     // Werkzeugleiste + Eingabezeile bleiben an, genau wie in der App.
@@ -69,12 +72,14 @@
     showResetIcon: true,
     allowStyleBar: true,
 
-    // App-typisches Verhalten.
+    // App-typisches Verhalten - hier bewusst NICHTS eingeschraenkt,
+    // damit die Web-Version 1:1 dieselben Funktionen hat wie die
+    // iOS-App (inkl. "Datei" > Neu/Oeffnen/Speichern/Exportieren
+    // im Hamburger-Menue und Kontextmenue per Rechtsklick/Long-Press).
     enableShiftDragZoom: true,
-    enableFileFeatures: false,   // kein "Datei oeffnen/speichern" wie in Classic
-    enableRightClick: false,
+    enableFileFeatures: true,
+    enableRightClick: true,
     showZoomButtons: true,
-    capturingThreshold: null,
 
     // Sprache der Oberflaeche (Deutsch). ISO-Code anpassen falls noetig.
     language: 'de',
