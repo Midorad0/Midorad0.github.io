@@ -2,17 +2,14 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <!-- Diese Meta-Tags sorgen dafür, dass es auf dem iPad wie eine App aussieht (ohne Safari-Suchleiste) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>GeoGebra Web-App</title>
+    <title>GeoGebra Rechner Suite</title>
     
-    <!-- Lädt die offizielle GeoGebra-Umgebung -->
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
     
     <style>
-        /* Entfernt Ränder, damit der Rechner 100% des Bildschirms ausfüllt */
         body { margin: 0; padding: 0; overflow: hidden; background-color: #fff; }
         #ggb-element { width: 100vw; height: 100vh; }
     </style>
@@ -21,25 +18,20 @@
     <div id="ggb-element"></div>
 
     <script>
-        // Hier konfigurierst du deinen Rechner
         var params = {
-            "appName": "classic", // Alternativen: "graphing", "geometry", "cas"
+            "appName": "suite", // Lädt die offizielle iPad "Rechner Suite"
             "width": window.innerWidth,
             "height": window.innerHeight,
             "showToolBar": true,
             "showAlgebraInput": true,
             "showMenuBar": true,
-            // Der Prüfungsmodus Button ist standardmäßig im Menü vorhanden. 
-            // Wenn man ihn klickt, läuft er nur visuell ab.
         };
         
-        // Initialisiert die App
         var applet = new GGBApplet(params, true);
         window.addEventListener("load", function() {
             applet.inject('ggb-element');
         });
 
-        // Passt die Größe an, wenn man das iPad dreht
         window.addEventListener("resize", function() {
             if(window.ggbApplet) {
                 window.ggbApplet.setSize(window.innerWidth, window.innerHeight);
