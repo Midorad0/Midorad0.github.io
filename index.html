@@ -92,6 +92,26 @@
     buttonOpacity: 1,
 
     useBrowserForJS: false,
+
+    // Das ist der offizielle Mechanismus, mit dem geogebra.org selbst
+    // auf JEDER seiner Seiten den Menuepunkt "Pruefungsmodus" aktiviert
+    // (Quelle: source/web/web/.../resources/html/app-template.html,
+    // Zeile ~370, aus diesem Repo). Ohne diesen Parameter erzeugt der
+    // Code den Menuepunkt gar nicht erst (siehe MenuViewController.
+    // shouldCreateExamEntry() im selben Repo).
+    //
+    // WICHTIG, damit Du weisst, was das wirklich tut (kein Fake, aber
+    // auch keine Wunder-Loesung): Ein Klick auf "Pruefungsmodus starten"
+    // -> Rechnertyp waehlen -> oeffnet einen Dialog, der versucht, den
+    // externen "Safe Exam Browser" (SEB) ueber die seb://-URL zu starten.
+    // Ohne installierten Safe Exam Browser auf dem Geraet des Nutzers
+    // passiert dabei sichtbar nichts (der Browser kennt das seb://-
+    // Protokoll nicht) - das ist exakt das Verhalten der echten
+    // GeoGebra-Website in einem normalen Browser. Nur die native
+    // iOS-App selbst kann den Pruefungsmodus ohne SEB direkt im
+    // Vollbild ausfuehren, weil sie technisch kein Browser ist.
+    examLaunchURL: 'seb://' + location.host + location.pathname + '?examMode=$mode',
+
     appletOnLoad: function () {
       console.log('GeoGebra Calculator Suite geladen.');
     }
