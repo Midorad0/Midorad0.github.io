@@ -2,141 +2,152 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>GeoGebra Rechner</title>
-<style>
-  /* Diese CSS-Regeln sorgen dafuer, dass der Rechner den ganzen
-     Bildschirm ausfuellt, genau wie die native App. Wenn Du den
-     Rechner nur in einem Teil Deiner Seite anzeigen willst, kannst
-     Du html/body weglassen und dem #ggb-calculator-container
-     stattdessen eine feste Breite/Hoehe geben. */
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    background: #fff;
-  }
-  #ggb-calculator-container {
-    width: 100%;
-    height: 100%;
-  }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoGebra Rechner Suite</title>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<!-- ============================================================
-     AB HIER: Das ist der Teil, den Du in Deine eigene Website
-     kopieren kannst (Container-Div + zwei Script-Bloecke).
-     ============================================================ -->
+<div class="device" id="device">
 
-<div id="ggb-calculator-container"></div>
+  <!-- status bar (iPadOS chrome — decorative, GeoGebra has no control over this) -->
+  <div class="statusbar">
+    <span class="sb-time" id="sbTime">18:22</span>
+    <span class="sb-date" id="sbDate">Dienstag 15. Sept.</span>
+    <div class="sb-right">
+      <svg class="sb-icon sb-conn" id="sbConnIconWifi" width="19" height="19" viewBox="0 0 24 24"><path d="M4 8.8a12 12 0 0116 0" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M7 12.6a7.5 7.5 0 0110 0" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M10.2 16.3a3 3 0 013.6 0" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+      <svg class="sb-icon sb-conn" id="sbConnIconAirplane" width="19" height="19" viewBox="0 0 24 24" hidden><path fill="currentColor" d="M21 15.3v-1.8l-7.6-4.7V4.6a1.4 1.4 0 00-2.8 0v4.2L3 13.5v1.8l7.6-2.4v4.9l-2.6 1.9v1.6l4-1.2 4 1.2v-1.6l-2.6-1.9v-4.9z"/></svg>
+      <span class="sb-battery-pct" id="sbBatteryPct">63 %</span>
+      <svg class="sb-icon" width="25" height="13" viewBox="0 0 25 13"><rect x="1" y="1" width="20" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1"/><rect x="22.3" y="4" width="1.8" height="5" rx="1" fill="currentColor"/><rect class="sb-battery-fill" id="sbBatteryFill" x="3" y="3" width="12.4" height="7" rx="1" fill="currentColor"/></svg>
+    </div>
+  </div>
 
-<!-- Laedt die offizielle GeoGebra Apps API (nur das JS-Ladeskript,
-     keine fertige Seite - dadurch bekommst Du KEINE "Webversion"
-     mit Menueleiste etc., sondern nur die App-Engine, die Du selbst
-     konfigurierst). -->
-<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+  <!-- main app shell -->
+  <div class="app">
+    <div class="icon-rail">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menü öffnen"><img src="assets/icons/hamburger.svg" width="22" height="22" alt=""></button>
+      <button class="rail-item active">
+        <img src="assets/icons/rail-algebra.svg" width="24" height="24" alt="">
+        <span>Algebra</span>
+      </button>
+      <button class="rail-item">
+        <img src="assets/icons/rail-tools.svg" width="24" height="24" alt="">
+        <span>Werkzeuge</span>
+      </button>
+      <button class="rail-item">
+        <img src="assets/icons/rail-table.svg" width="24" height="24" alt="">
+        <span>Tabelle</span>
+      </button>
+      <button class="rail-item">
+        <img src="assets/icons/rail-spreadsheet.svg" width="24" height="24" alt="">
+        <span>Tabellenkalkul<br>ation</span>
+      </button>
+    </div>
 
-<script>
-(function () {
-  var container = document.getElementById('ggb-calculator-container');
+    <div class="algebra-panel">
+      <div class="algebra-toolbar">
+        <button class="add-input-btn">+</button>
+        <input type="text" class="algebra-input" placeholder="Eingabe…" readonly>
+      </div>
+      <div class="algebra-list"></div>
+    </div>
 
-  var params = {
-    // "suite" = GeoGebra Calculator Suite, exakt die App, die auch im
-    // iOS App Store als "GeoGebra Rechner" / "GeoGebra Calculator"
-    // angeboten wird (Grafik, Geometrie, 3D, Tabelle, CAS in einer
-    // schlanken Oberflaeche). NICHT appName "classic" verwenden -
-    // das waere die Desktop-Oberflaeche mit klassischer Menueleiste.
-    appName: 'suite',
+    <div class="graphics-view" id="graphicsView">
+      <button class="top-gear-btn"><img src="assets/icons/gear-detailed.svg" width="20" height="20" alt=""></button>
+      <div class="axis-x" id="axisX"></div>
+      <div class="axis-y" id="axisY"></div>
+      <div class="axis-labels" id="axisLabels"></div>
+      <div class="watermark">
+        <img src="assets/icons/watermark-logo.svg" width="16" height="16" alt="">
+        <span>GeoGebra Rechner Suite</span>
+      </div>
+    </div>
+  </div>
 
-    width: container.clientWidth,
-    height: container.clientHeight,
+  <!-- sidebar drawer -->
+  <div class="drawer-overlay" id="drawerOverlay">
+    <div class="drawer">
+      <div class="drawer-header">GeoGebra Rechner Suite</div>
+      <button class="drawer-item"><img src="assets/icons/clear.svg" width="22" height="22" alt=""><span>Alles löschen</span></button>
+      <button class="drawer-item"><img src="assets/icons/search.svg" width="22" height="22" alt=""><span>Öffnen</span></button>
+      <button class="drawer-item"><img src="assets/icons/share.svg" width="22" height="22" alt=""><span>Teilen</span></button>
+      <button class="drawer-item"><img src="assets/icons/collections.svg" width="22" height="22" alt=""><span>Bild exportieren</span></button>
+      <button class="drawer-item" id="examMenuItem"><img src="assets/icons/hourglass.svg" width="22" height="22" alt=""><span>Prüfungsmodus</span></button>
+      <hr class="drawer-divider">
+      <button class="drawer-item" id="switchCalcItem"><img src="assets/icons/geogebra-blob.svg" width="22" height="22" alt=""><span>Rechner wechseln</span></button>
+      <button class="drawer-item"><img src="assets/icons/gear-simple.svg" width="22" height="22" alt=""><span>Einstellungen</span></button>
+      <button class="drawer-item"><img src="assets/icons/help.svg" width="22" height="22" alt=""><span>Hilfe &amp; Feedback</span></button>
+    </div>
+  </div>
 
-    // Passt Groesse automatisch an den Container an (Fenster-Resize,
-    // Rotation auf Mobilgeraeten).
-    scale: 1,
-    disableAutoScale: false,
-    allowUpscale: true,
+  <!-- exam mode preparation dialog (native iPad flow — mocked, see note below) -->
+  <div class="modal-overlay" id="examPrepOverlay">
+    <div class="modal-box">
+      <h2>Prüfungsmodus vorbereiten</h2>
+      <p>Aktiviere bitte den Flugmodus und deaktiviere deine Wi-Fi und Bluetooth Verbindung um weiterzumachen.</p>
+      <div class="modal-actions">
+        <button class="link-btn" id="examPrepCancel">Abbrechen</button>
+        <button class="link-btn link-btn-primary" id="examPrepNext" title="Nur zum Testen: simuliert das Aktivieren des Flugmodus, das im Browser nicht real erkannt werden kann">Weiter</button>
+      </div>
+    </div>
+  </div>
 
-    // In appName "suite" erzeugt showMenuBar NICHT die klassische
-    // Desktop-Menueleiste, sondern genau das Hamburger-Icon (drei
-    // Striche) oben, ueber das man an Einstellungen/Optionen kommt -
-    // wie in der App. Deshalb hier true.
-    showMenuBar: true,
+  <!-- native iOS-style restriction alert (mocked — this is rendered by iPadOS itself, not by GeoGebra) -->
+  <div class="ios-alert-overlay" id="iosAlertOverlay">
+    <div class="ios-alert">
+      <h3>Einschränkung durch App bestätigen</h3>
+      <p>GeoGebra möchte den Bewertungsmodus starten. Andere Apps können auf iPad erst wieder verwendet werden, wenn GeoGebra den Bewertungsmodus beendet. Möchtest du das zulassen?</p>
+      <div class="ios-alert-actions">
+        <button id="iosAlertNo">Nein</button>
+        <button id="iosAlertYes">Ja</button>
+      </div>
+    </div>
+  </div>
 
-    // Werkzeugleiste + Eingabezeile bleiben an, genau wie in der App.
-    showToolBar: true,
-    showToolBarHelp: false,
-    showAlgebraInput: true,
-    showResetIcon: true,
-    allowStyleBar: true,
+  <!-- calculator picker screen -->
+  <div class="picker-screen" id="pickerScreen">
+    <button class="picker-close" id="pickerClose"><img src="assets/icons/clear.svg" width="26" height="26" alt=""></button>
+    <h1>GeoGebra Rechner wählen</h1>
+    <div class="picker-grid">
+      <button class="picker-item selected">
+        <div class="picker-circle"><img src="assets/icons/picker-graphing.svg" width="40" height="40" alt=""></div>
+        <span>Grafikrechner</span>
+      </button>
+      <button class="picker-item">
+        <div class="picker-circle"><img src="assets/icons/picker-3d.svg" width="40" height="40" alt=""></div>
+        <span>3D Rechner</span>
+      </button>
+      <button class="picker-item">
+        <div class="picker-circle"><img src="assets/icons/picker-geometry.svg" width="40" height="40" alt=""></div>
+        <span>Geometrie</span>
+      </button>
+      <button class="picker-item">
+        <div class="picker-circle"><img src="assets/icons/picker-cas.svg" width="40" height="40" alt=""></div>
+        <span>CAS</span>
+      </button>
+      <button class="picker-item">
+        <div class="picker-circle"><img src="assets/icons/picker-probability.svg" width="40" height="40" alt=""></div>
+        <span>Wahrscheinlichkeit</span>
+      </button>
+      <button class="picker-item">
+        <div class="picker-circle"><img src="assets/icons/picker-calculator.svg" width="40" height="40" alt=""></div>
+        <span>Taschenrechner</span>
+      </button>
+    </div>
+  </div>
 
-    // App-typisches Verhalten - hier bewusst NICHTS eingeschraenkt,
-    // damit die Web-Version 1:1 dieselben Funktionen hat wie die
-    // iOS-App (inkl. "Datei" > Neu/Oeffnen/Speichern/Exportieren
-    // im Hamburger-Menue und Kontextmenue per Rechtsklick/Long-Press).
-    enableShiftDragZoom: true,
-    enableFileFeatures: true,
-    enableRightClick: true,
-    showZoomButtons: true,
+</div>
 
-    // Sprache der Oberflaeche (Deutsch). ISO-Code anpassen falls noetig.
-    language: 'de',
-    country: 'DE',
+<!-- Dev/QA navigation — NOT part of the recreated app UI, only for reviewing each screen -->
+<div class="demo-nav" id="demoNav">
+  <span class="demo-nav-label">Demo-Navigation (nur zur Kontrolle, nicht Teil der App):</span>
+  <button data-view="main">1 Hauptansicht</button>
+  <button data-view="drawer">2 Menü offen</button>
+  <button data-view="examPrep">3 Prüfungsmodus-Dialog</button>
+  <button data-view="iosAlert">4 iOS-Systemalert</button>
+  <button data-view="picker">5 Rechner-Auswahl</button>
+</div>
 
-    // Rand/Look
-    borderColor: null,
-    buttonShadows: true,
-    buttonRounding: 0.7,
-    buttonOpacity: 1,
-
-    useBrowserForJS: false,
-
-    // Das ist der offizielle Mechanismus, mit dem geogebra.org selbst
-    // auf JEDER seiner Seiten den Menuepunkt "Pruefungsmodus" aktiviert
-    // (Quelle: source/web/web/.../resources/html/app-template.html,
-    // Zeile ~370, aus diesem Repo). Ohne diesen Parameter erzeugt der
-    // Code den Menuepunkt gar nicht erst (siehe MenuViewController.
-    // shouldCreateExamEntry() im selben Repo).
-    //
-    // WICHTIG, damit Du weisst, was das wirklich tut (kein Fake, aber
-    // auch keine Wunder-Loesung): Ein Klick auf "Pruefungsmodus starten"
-    // -> Rechnertyp waehlen -> oeffnet einen Dialog, der versucht, den
-    // externen "Safe Exam Browser" (SEB) ueber die seb://-URL zu starten.
-    // Ohne installierten Safe Exam Browser auf dem Geraet des Nutzers
-    // passiert dabei sichtbar nichts (der Browser kennt das seb://-
-    // Protokoll nicht) - das ist exakt das Verhalten der echten
-    // GeoGebra-Website in einem normalen Browser. Nur die native
-    // iOS-App selbst kann den Pruefungsmodus ohne SEB direkt im
-    // Vollbild ausfuehren, weil sie technisch kein Browser ist.
-    examLaunchURL: 'seb://' + location.host + location.pathname + '?examMode=$mode',
-
-    appletOnLoad: function () {
-      console.log('GeoGebra Calculator Suite geladen.');
-    }
-  };
-
-  var ggbApp = new GGBApplet(params, true);
-
-  window.addEventListener('load', function () {
-    ggbApp.inject('ggb-calculator-container');
-  });
-
-  // Bei Fenstergroessenaenderung (z.B. Handy-Drehung) die Applet-
-  // Groesse an den Container anpassen, damit es sich wie eine native
-  // App verhaelt statt wie eine starre eingebettete Webseite.
-  window.addEventListener('resize', function () {
-    if (window.ggbApplet) {
-      window.ggbApplet.setSize(container.clientWidth, container.clientHeight);
-    }
-  });
-})();
-</script>
-
-<!-- ============================================================
-     ENDE des Teils zum Kopieren.
-     ============================================================ -->
-
+<script src="js/app.js"></script>
 </body>
 </html>
