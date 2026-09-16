@@ -2,7 +2,10 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
 <title>GeoGebra Rechner Suite</title>
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -22,10 +25,22 @@
         <img src="assets/icons/rail-tools.svg" width="24" height="24" alt="">
         <span data-i18n="rail_tools">Werkzeuge</span>
       </button>
+      <!-- Table view has no single-letter GgbAPI.setPerspective() code (only
+           the internal ToolbarPanel.openTableView(), not part of the public
+           embedding API) — stays visual-only, same as the settings fields
+           with no public API hook. -->
       <button class="rail-item">
         <img src="assets/icons/rail-table.svg" width="24" height="24" alt="">
         <span data-i18n="rail_table">Tabelle</span>
       </button>
+      <!-- Like Table view, Spreadsheet has no working public-API equivalent
+           here: NavigationRail's real click handler calls the internal
+           ToolbarPanel.openSpreadsheetView(), not GgbAPI.setPerspective().
+           Tried wiring data-perspective="S" (the raw single-letter view code)
+           — it does switch the internal view flag but renders a blank,
+           canvas-less pane instead of an actual spreadsheet grid, so it's
+           worse than doing nothing. Stays visual-only until GeoGebra exposes
+           a real public hook for it. -->
       <button class="rail-item">
         <img src="assets/icons/rail-spreadsheet.svg" width="24" height="24" alt="">
         <span data-i18n="rail_spreadsheet">Tabellenkalkul<br>ation</span>
@@ -54,7 +69,7 @@
           </button>
         </div>
       </div>
-      <div class="ggb-content">
+      <div class="ggb-content" id="ggbContent">
         <div id="ggbContainer" class="ggb-container"></div>
         <div class="ggb-loading" id="ggbLoading">Wird geladen…</div>
       </div>

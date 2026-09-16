@@ -51,6 +51,14 @@ button { font-family: inherit; cursor: pointer; }
   background: #fff;
   display: flex;
   flex-direction: column;
+  /* Edge-to-edge like the native app: fill all the way into the iPad/iPhone
+     notch, rounded corners and home indicator with our own white background
+     instead of leaving those regions to the OS (which paints them black for
+     a page that never opts in via viewport-fit=cover) — that black fringe is
+     what reads as "black bars" around the app. Rail/header/content still sit
+     inset from the real edges via the padding below. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  box-sizing: border-box;
 }
 
 /* ---------------- app shell ---------------- */
@@ -175,6 +183,14 @@ button { font-family: inherit; cursor: pointer; }
 .ggb-container {
   position: absolute;
   inset: 0;
+  /* !important defends against GeoGebra's own embed script, which stamps an
+     inline pixel width/height onto this exact element at inject time (see
+     resizeGgb() in app.js) — without this, that inline size wins the cascade
+     and the applet gets stuck at whatever (often too-small) size it measured
+     at load, leaving a dead grey/white gap where the algebra view and
+     graphics canvas should extend to fill the pane. */
+  width: 100% !important;
+  height: 100% !important;
 }
 .ggb-loading {
   position: absolute;

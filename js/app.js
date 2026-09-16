@@ -142,6 +142,13 @@
   let ggbApplet = null;
   const ggbLoading = document.getElementById("ggbLoading");
   const ggbContainer = document.getElementById("ggbContainer");
+  // Measure from the plain wrapper, not #ggbContainer itself: GGBApplet's
+  // embed script stamps an inline px width/height straight onto #ggbContainer
+  // at inject time and again on every internal reflow, so reading its own
+  // rect back would just echo whatever (often too-small) size it last set —
+  // the dead-space/black-bar bug. The wrapper is never touched by GGB, so its
+  // rect always reflects the real available space.
+  const ggbContent = document.getElementById("ggbContent");
 
   function onGgbAppletLoaded() {
     ggbApplet = window.ggbApplet;
@@ -151,14 +158,18 @@
 
   function resizeGgb() {
     if (!ggbApplet) return;
-    const rect = ggbContainer.getBoundingClientRect();
+    const rect = ggbContent.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
-      ggbApplet.setSize(Math.round(rect.width), Math.round(rect.height));
+      const w = Math.round(rect.width);
+      const h = Math.round(rect.height);
+      ggbContainer.style.width = w + "px";
+      ggbContainer.style.height = h + "px";
+      ggbApplet.setSize(w, h);
     }
   }
 
   function initGgb() {
-    const rect = ggbContainer.getBoundingClientRect();
+    const rect = ggbContent.getBoundingClientRect();
     const params = {
       appName: "suite",
       width: Math.max(320, Math.round(rect.width)),
@@ -194,7 +205,7 @@
   }
 
   window.addEventListener("resize", resizeGgb);
-  new ResizeObserver(resizeGgb).observe(ggbContainer);
+  new ResizeObserver(resizeGgb).observe(ggbContent);
 
   // ---------------- view/dialog switching ----------------
   const drawerOverlay = document.getElementById("drawerOverlay");
