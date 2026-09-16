@@ -255,9 +255,17 @@
   // Wi-Fi/Bluetooth state the way the native iPad app does, so this simulates the
   // OS accepting it and moves on to the native confirmation alert, purely so the
   // rest of the flow can be reviewed.
-  document.getElementById("examPrepNext").addEventListener("click", () => {
+  function advanceFromExamPrep() {
     closeAllOverlays();
     iosAlertOverlay.classList.add("open");
+  }
+  document.getElementById("examPrepNext").addEventListener("click", advanceFromExamPrep);
+  // Test affordance requested on top of the real flow: since neither of these
+  // activation prompts can be driven by real OS state in a browser, clicking
+  // outside the box advances to the next step instead of just dismissing it,
+  // so the whole exam-activation sequence can be clicked through quickly.
+  examPrepOverlay.addEventListener("click", (e) => {
+    if (e.target === examPrepOverlay) advanceFromExamPrep();
   });
 
   document.getElementById("switchCalcItem").addEventListener("click", () => {
@@ -421,9 +429,14 @@
   document.getElementById("examLogOk").addEventListener("click", closeAllOverlays);
 
   document.getElementById("iosAlertNo").addEventListener("click", closeAllOverlays);
-  document.getElementById("iosAlertYes").addEventListener("click", () => {
+  function advanceFromIosAlert() {
     closeAllOverlays();
     startExam();
+  }
+  document.getElementById("iosAlertYes").addEventListener("click", advanceFromIosAlert);
+  // Same click-outside-advances affordance as the prep dialog above.
+  iosAlertOverlay.addEventListener("click", (e) => {
+    if (e.target === iosAlertOverlay) advanceFromIosAlert();
   });
 
   document.getElementById("examExitCancel").addEventListener("click", closeAllOverlays);
