@@ -11,292 +11,266 @@
 </head>
 <body>
 
-<div class="device" id="device">
+<div class="app-shell" id="appShell">
 
-  <!-- main app shell -->
-  <div class="app">
-    <div class="icon-rail" id="iconRail">
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menü öffnen"><img src="assets/icons/hamburger.svg" width="22" height="22" alt=""></button>
-      <button class="rail-item active" data-perspective="AG">
-        <img src="assets/icons/rail-algebra.svg" width="24" height="24" alt="">
+  <!-- GlobalHeader (org.geogebra.web.shared.GlobalHeader): hamburger + logo +
+       app name (hidden in compact) + app-switcher pill (mirrors
+       #suiteAppPicker / SuiteHeaderAppPicker) + right-side buttons. While an
+       exam runs, addExamTimer() hides the normal button row and shows a
+       timer + info button in its place instead - same swap here. -->
+  <header class="gg-header" id="ggHeader">
+    <button class="header-btn menu-btn" id="menuBtn" aria-label="Menü öffnen">
+      <img src="assets/icons/hamburger.svg" width="22" height="22" alt="">
+    </button>
+    <button class="header-logo" id="headerLogo" aria-label="geogebra.org">
+      <img src="assets/icons/geogebra-blob.svg" width="24" height="24" alt="">
+    </button>
+    <h1 class="header-appname" data-i18n="app_name">GeoGebra Rechner Suite</h1>
+    <button class="app-picker-pill" id="appPickerPill">
+      <img id="appPickerIcon" src="assets/icons/picker-graphing.svg" width="18" height="18" alt="">
+      <span id="appPickerLabel" data-i18n="picker_graphing">Grafikrechner</span>
+    </button>
+    <div class="header-buttons" id="headerButtons">
+      <button class="header-btn" id="headerShareBtn" data-i18n-title="item_share" title="Teilen">
+        <img src="assets/icons/share.svg" width="18" height="18" alt="">
+      </button>
+    </div>
+    <!-- exam panel: real GlobalHeader#addExamTimer markup (timer + info button) -->
+    <div class="exam-panel" id="examPanel" hidden>
+      <img class="exam-timer-icon" src="assets/icons/timer.svg" width="16" height="16" alt="">
+      <span class="exam-timer" id="examTimer">0:00</span>
+      <button class="header-btn exam-info-btn" id="examInfoBtn" data-i18n-title="examLog_header" title="Prüfungsprotokoll">
+        <img src="assets/icons/info.svg" width="18" height="18" alt="">
+      </button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <!-- NavigationRail (org.geogebra.web.full.gui.toolbarpanel.NavigationRail).
+         Algebra/Tools switch ToolbarPanel's internal dock-panel layout, which
+         has no public embedding-API equivalent; we approximate the visual
+         result with setPerspective(). Table/Spreadsheet have no working
+         public-API replacement at all, so they stay disabled with a note
+         rather than pretending to do something. -->
+    <nav class="nav-rail" id="navRail">
+      <button class="rail-item active" id="railAlgebra" data-perspective="AG">
+        <img class="rail-icon" src="assets/icons/rail-algebra.svg" width="24" height="24" alt="">
         <span data-i18n="rail_algebra">Algebra</span>
       </button>
-      <button class="rail-item" data-perspective="G">
-        <img src="assets/icons/rail-tools.svg" width="24" height="24" alt="">
+      <button class="rail-item" id="railTools" data-perspective="G">
+        <img class="rail-icon" src="assets/icons/rail-tools.svg" width="24" height="24" alt="">
         <span data-i18n="rail_tools">Werkzeuge</span>
       </button>
-      <!-- Table view has no single-letter GgbAPI.setPerspective() code (only
-           the internal ToolbarPanel.openTableView(), not part of the public
-           embedding API) — stays visual-only, same as the settings fields
-           with no public API hook. -->
-      <button class="rail-item">
-        <img src="assets/icons/rail-table.svg" width="24" height="24" alt="">
+      <button class="rail-item rail-item-disabled" id="railTable">
+        <img class="rail-icon" src="assets/icons/rail-table.svg" width="24" height="24" alt="">
         <span data-i18n="rail_table">Tabelle</span>
       </button>
-      <!-- Like Table view, Spreadsheet has no working public-API equivalent
-           here: NavigationRail's real click handler calls the internal
-           ToolbarPanel.openSpreadsheetView(), not GgbAPI.setPerspective().
-           Tried wiring data-perspective="S" (the raw single-letter view code)
-           — it does switch the internal view flag but renders a blank,
-           canvas-less pane instead of an actual spreadsheet grid, so it's
-           worse than doing nothing. Stays visual-only until GeoGebra exposes
-           a real public hook for it. -->
-      <button class="rail-item">
-        <img src="assets/icons/rail-spreadsheet.svg" width="24" height="24" alt="">
+      <button class="rail-item rail-item-disabled" id="railSpreadsheet">
+        <img class="rail-icon" src="assets/icons/rail-spreadsheet.svg" width="24" height="24" alt="">
         <span data-i18n="rail_spreadsheet">Tabellenkalkul<br>ation</span>
       </button>
-    </div>
+    </nav>
 
     <!-- Real GeoGebra engine, loaded from the official geogebra.org embedding
-         API. Its own menu bar / toolbar / header are switched off — our
-         hamburger + icon rail + header bar above are the only chrome; the
-         algebra list, input row and graphics canvas underneath are the real,
-         fully working engine, not a static recreation. -->
-    <div class="ggb-wrap">
-      <!-- mirrors the real GlobalHeader ("GeoGebraHeader", compact/48px
-           variant): normally just hosts the settings button, but while exam
-           mode is active the normal buttons hide and an exam panel
-           (timer + info button, GlobalHeader.addExamTimer) takes their
-           place at the right edge — same as the real app, the header bar
-           itself stays white, only the icon rail turns teal/colored. -->
-      <div class="app-header" id="appHeader">
-        <button class="top-gear-btn" id="topGearBtn"><img src="assets/icons/gear-detailed.svg" width="20" height="20" alt=""></button>
-        <div class="exam-top-panel" id="examTopPanel" hidden>
-          <img class="exam-timer-icon" src="assets/icons/timer.svg" width="18" height="18" alt="">
-          <span class="exam-timer-label" id="examTopTimer">0:00</span>
-          <button class="exam-info-btn" id="examInfoBtn" data-i18n-title="examLog_header" title="Prüfungsprotokoll">
-            <img src="assets/icons/info.svg" width="20" height="20" alt="">
-          </button>
-        </div>
-      </div>
-      <div class="ggb-content" id="ggbContent">
-        <div id="ggbContainer" class="ggb-container"></div>
-        <div class="ggb-loading" id="ggbLoading">Wird geladen…</div>
-      </div>
-    </div>
+         API (appName "suite"). Own chrome only: engine's own menu/toolbar/
+         header stay switched off. -->
+    <main class="ggb-area" id="ggbArea">
+      <div id="ggbContainer" class="ggb-container"></div>
+      <div class="ggb-loading" id="ggbLoading">Wird geladen…</div>
+    </main>
   </div>
+</div>
 
-  <!-- sidebar drawer -->
-  <div class="drawer-overlay" id="drawerOverlay">
-    <div class="drawer">
-      <div class="drawer-header" data-i18n="app_name">GeoGebra Rechner Suite</div>
+<div class="toast" id="toast"></div>
+
+<!-- Drawer: two variants, matching DefaultDrawerMenuFactory (normal) and
+     ExamDrawerMenuFactory (exam - a shorter, different item set, not just a
+     relabeled version of the normal one). -->
+<div class="overlay drawer-overlay" id="drawerOverlay">
+  <div class="drawer" id="drawer">
+    <div class="drawer-header" data-i18n="app_name">GeoGebra Rechner Suite</div>
+
+    <div id="drawerNormal">
       <button class="drawer-item" id="clearAllItem"><img src="assets/icons/clear.svg" width="22" height="22" alt=""><span data-i18n="item_clear">Alles löschen</span></button>
-      <button class="drawer-item"><img src="assets/icons/search.svg" width="22" height="22" alt=""><span data-i18n="item_open">Öffnen</span></button>
-      <button class="drawer-item"><img src="assets/icons/share.svg" width="22" height="22" alt=""><span data-i18n="item_share">Teilen</span></button>
-      <button class="drawer-item"><img src="assets/icons/collections.svg" width="22" height="22" alt=""><span data-i18n="item_export">Bild exportieren</span></button>
-      <button class="drawer-item" id="examMenuItem"><img id="examMenuIcon" src="assets/icons/hourglass.svg" width="22" height="22" alt=""><span id="examMenuLabel" data-i18n="item_exam">Prüfungsmodus</span></button>
+      <button class="drawer-item" id="openItem"><img src="assets/icons/search.svg" width="22" height="22" alt=""><span data-i18n="item_open">Öffnen</span></button>
+      <button class="drawer-item" id="shareItem"><img src="assets/icons/share.svg" width="22" height="22" alt=""><span data-i18n="item_share">Teilen</span></button>
+      <button class="drawer-item" id="exportImageItem"><img src="assets/icons/collections.svg" width="22" height="22" alt=""><span data-i18n="item_export">Bild exportieren</span></button>
+      <button class="drawer-item" id="examStartItem"><img src="assets/icons/hourglass.svg" width="22" height="22" alt=""><span data-i18n="item_exam">Prüfungsmodus</span></button>
       <hr class="drawer-divider">
       <button class="drawer-item" id="switchCalcItem"><img src="assets/icons/geogebra-blob.svg" width="22" height="22" alt=""><span data-i18n="item_switch">Rechner wechseln</span></button>
       <button class="drawer-item" id="settingsItem"><img src="assets/icons/gear-simple.svg" width="22" height="22" alt=""><span data-i18n="item_settings">Einstellungen</span></button>
-      <button class="drawer-item"><img src="assets/icons/help.svg" width="22" height="22" alt=""><span data-i18n="item_help">Hilfe &amp; Feedback</span></button>
+      <button class="drawer-item" id="helpItem"><img src="assets/icons/help.svg" width="22" height="22" alt=""><span data-i18n="item_help">Hilfe &amp; Feedback</span></button>
+    </div>
+
+    <!-- ExamDrawerMenuFactory: Clear All, Open, Switch Calculator, Exam Log,
+         Exit Exam (Exit Exam hidden only for a locked/SEB exam, which this
+         port never enters, so it always shows). Both "start" and "exit" use
+         the same hourglass icon in the real source - only the label swaps. -->
+    <div id="drawerExam" hidden>
+      <button class="drawer-item" id="clearAllItemExam"><img src="assets/icons/clear.svg" width="22" height="22" alt=""><span data-i18n="item_clear">Alles löschen</span></button>
+      <button class="drawer-item" id="openItemExam"><img src="assets/icons/search.svg" width="22" height="22" alt=""><span data-i18n="item_open">Öffnen</span></button>
+      <button class="drawer-item" id="switchCalcItemExam"><img src="assets/icons/geogebra-blob.svg" width="22" height="22" alt=""><span data-i18n="item_switch">Rechner wechseln</span></button>
+      <button class="drawer-item" id="examLogItem"><img src="assets/icons/info.svg" width="22" height="22" alt=""><span data-i18n="examLog_header">Prüfungsprotokoll</span></button>
+      <button class="drawer-item" id="examExitItem"><img src="assets/icons/hourglass.svg" width="22" height="22" alt=""><span data-i18n="item_exam_end">Prüfung beenden</span></button>
     </div>
   </div>
+</div>
 
-  <!-- exam mode preparation dialog (native iPad flow — mocked, see note below) -->
-  <div class="modal-overlay" id="examPrepOverlay">
-    <div class="modal-box">
-      <h2 data-i18n="examPrep_title">Prüfungsmodus vorbereiten</h2>
-      <p data-i18n="examPrep_body">Aktiviere bitte den Flugmodus und deaktiviere deine Wi-Fi und Bluetooth Verbindung um weiterzumachen.</p>
-      <div class="modal-actions">
-        <button class="link-btn" id="examPrepCancel" data-i18n="btn_cancel">Abbrechen</button>
-        <button class="link-btn link-btn-primary" id="examPrepNext" data-i18n="btn_next" title="Nur zum Testen: simuliert das Aktivieren des Flugmodus, das im Browser nicht real erkannt werden kann">Weiter</button>
-      </div>
+<!-- ExamStartDialog: real title/body/button keys (exam_menu_enter /
+     exam_start_dialog_text / exam_start_button). No exam-type picker (that
+     branch is desktop/Chromebook-only in the source); no flight-mode /
+     "restriction" screens - those don't exist anywhere in the GeoGebra
+     source, they're iPadOS's own Guided Access chrome, outside the app. -->
+<div class="overlay modal-overlay" id="examStartOverlay">
+  <div class="modal-box">
+    <h2 data-i18n="exam_menu_enter">Prüfung starten</h2>
+    <p data-i18n="exam_start_dialog_text">Während der Prüfung werden die verstrichene Zeit und der Prüfungstyp angezeigt.</p>
+    <div class="modal-actions">
+      <button class="link-btn" id="examStartCancel" data-i18n="btn_cancel">Abbrechen</button>
+      <button class="link-btn link-btn-primary" id="examStartConfirm" data-i18n="exam_start_button">Starten</button>
     </div>
   </div>
+</div>
 
-  <!-- native iOS-style restriction alert (mocked — this is rendered by iPadOS itself, not by GeoGebra) -->
-  <div class="ios-alert-overlay" id="iosAlertOverlay">
-    <div class="ios-alert">
-      <h3 data-i18n="iosAlert_title">Einschränkung durch App bestätigen</h3>
-      <p data-i18n="iosAlert_body">GeoGebra möchte den Bewertungsmodus starten. Andere Apps können auf iPad erst wieder verwendet werden, wenn GeoGebra den Bewertungsmodus beendet. Möchtest du das zulassen?</p>
-      <div class="ios-alert-actions">
-        <button id="iosAlertNo" data-i18n="btn_no">Nein</button>
-        <button id="iosAlertYes" data-i18n="btn_yes">Ja</button>
-      </div>
+<!-- ExamExitConfirmDialog: title-less, body = exam_exit_confirmation -->
+<div class="overlay modal-overlay" id="examExitOverlay">
+  <div class="modal-box">
+    <p data-i18n="exam_exit_confirmation">Willst du den Prüfungsmodus wirklich beenden?</p>
+    <div class="modal-actions">
+      <button class="link-btn" id="examExitCancel" data-i18n="btn_cancel">Abbrechen</button>
+      <button class="link-btn link-btn-primary" id="examExitConfirm" data-i18n="btn_exit">Beenden</button>
     </div>
   </div>
+</div>
 
-  <!-- exam exit confirmation (real strings from source: exam_exit_header / exam_exit_confirmation) -->
-  <div class="modal-overlay" id="examExitOverlay">
-    <div class="modal-box exam-exit-box">
-      <h2 data-i18n="examExit_title">Prüfung beenden?</h2>
-      <p data-i18n="examExit_body">Willst du den Prüfungsmodus wirklich beenden?</p>
-      <div class="modal-actions">
-        <button class="link-btn" id="examExitCancel" data-i18n="btn_cancel">Abbrechen</button>
-        <button class="link-btn link-btn-primary" id="examExitConfirm" data-i18n="btn_end">Beenden</button>
+<!-- ExamLogAndExitDialog - one shared shell, filled in by JS for either the
+     "log" variant (info button / drawer's Exam Log while still running) or
+     the "summary" variant (after confirming Exit Exam), since the two show
+     different rows in a different order, not just different button labels. -->
+<div class="overlay modal-overlay" id="examLogOverlay">
+  <div class="modal-box exam-log-box">
+    <div class="exam-log-titlepanel" id="examLogTitlePanel">
+      <img class="exam-alert-icon" id="examAlertIcon" src="assets/icons/info.svg" width="18" height="18" alt="" hidden>
+      <div class="exam-log-title">
+        <span class="exam-log-calctype" id="examLogCalcType">Grafikrechner</span>
+        <span class="exam-log-status" id="examLogStatus">Prüfungsmodus: OK</span>
       </div>
     </div>
-  </div>
-
-  <!-- exam feedback / summary dialog, shown after ending exam mode — content
-       structure mirrors the real ExamLogAndExitDialog (non-log variant):
-       calc type + status, "show this screen to your teacher", duration,
-       start date, start time, end time. -->
-  <div class="modal-overlay" id="examFeedbackOverlay">
-    <div class="modal-box exam-feedback-box">
-      <div class="exam-feedback-titlepanel">
-        <div class="exam-feedback-title">
-          <span class="exam-feedback-calctype" id="examFeedbackCalcType">Grafikrechner</span>
-          <span class="exam-feedback-status" id="examFeedbackStatus">Prüfungsmodus: OK</span>
-        </div>
-      </div>
-      <div class="exam-feedback-content">
-        <p class="exam-feedback-teacher" data-i18n="examFeedback_teacher">Zeige diesen Bildschirm deiner Lehrkraft</p>
-        <div class="exam-feedback-rows">
-          <div class="exam-feedback-row">
-            <span class="exam-feedback-label" data-i18n="examFeedback_duration">Dauer</span>
-            <span class="exam-feedback-value" id="examFeedbackDuration">0:00</span>
-          </div>
-          <div class="exam-feedback-row">
-            <span class="exam-feedback-label" data-i18n="examFeedback_date">Datum der Prüfung</span>
-            <span class="exam-feedback-value" id="examFeedbackDate">–</span>
-          </div>
-          <div class="exam-feedback-row">
-            <span class="exam-feedback-label" data-i18n="examFeedback_start">Beginn der Prüfung</span>
-            <span class="exam-feedback-value" id="examFeedbackStart">–</span>
-          </div>
-          <div class="exam-feedback-row">
-            <span class="exam-feedback-label" data-i18n="examFeedback_end">Ende der Prüfung</span>
-            <span class="exam-feedback-value" id="examFeedbackEnd">–</span>
-          </div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="link-btn" id="examFeedbackOk" data-i18n="btn_end">Beenden</button>
-      </div>
+    <div class="exam-log-content" id="examLogContent"></div>
+    <div class="modal-actions">
+      <button class="link-btn link-btn-primary" id="examLogOk">OK</button>
     </div>
   </div>
+</div>
 
-  <!-- exam log / info dialog, shown when tapping the info button in the exam
-       panel WHILE the exam is still running (GlobalHeader's examInfoBtn ->
-       showExamInfoDialog -> ExamLogAndExitDialog(app, true, ...), the "log"
-       variant: same teal title panel, but no teacher line, no end time —
-       instead a live, still-running duration — and its "OK" button just
-       closes the dialog without ending the exam. -->
-  <div class="modal-overlay" id="examLogOverlay">
-    <div class="modal-box exam-feedback-box">
-      <div class="exam-feedback-titlepanel">
-        <div class="exam-feedback-title">
-          <span class="exam-feedback-calctype" id="examLogCalcType">Grafikrechner</span>
-          <span class="exam-feedback-status" id="examLogStatus">Prüfungsmodus: OK</span>
-        </div>
-      </div>
-      <div class="exam-feedback-content">
-        <div class="exam-feedback-rows">
-          <div class="exam-feedback-row">
-            <span class="exam-feedback-label" data-i18n="examFeedback_date">Datum der Prüfung</span>
-            <span class="exam-feedback-value" id="examLogDate">–</span>
-          </div>
-          <div class="exam-feedback-row">
-            <span class="exam-feedback-label" data-i18n="examFeedback_start">Beginn der Prüfung</span>
-            <span class="exam-feedback-value" id="examLogStart">–</span>
-          </div>
-          <div class="exam-feedback-row">
-            <span class="exam-feedback-label" data-i18n="examFeedback_duration">Dauer</span>
-            <span class="exam-feedback-value" id="examLogDuration">0:00</span>
-          </div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="link-btn" id="examLogOk" data-i18n="btn_ok">OK</button>
-      </div>
+<!-- Calculator switcher (CalculatorSwitcherDialog / AppSwitcherPopup): the
+     real, fixed SuiteSubApp list. Switching calls the actual (if
+     undocumented) ggbApplet.switchCalculator(appCode) embedding-API method -
+     the same call the native UI itself uses under the hood - not a
+     perspective-code approximation. -->
+<div class="picker-screen" id="pickerScreen">
+  <button class="picker-close" id="pickerClose"><img src="assets/icons/clear.svg" width="26" height="26" alt=""></button>
+  <h1 data-i18n="picker_title">GeoGebra Rechner wählen</h1>
+  <div class="picker-grid">
+    <button class="picker-item selected" data-app="graphing">
+      <div class="picker-circle"><img src="assets/icons/picker-graphing.svg" width="40" height="40" alt=""></div>
+      <span data-i18n="picker_graphing">Grafikrechner</span>
+    </button>
+    <button class="picker-item" data-app="3d">
+      <div class="picker-circle"><img src="assets/icons/picker-3d.svg" width="40" height="40" alt=""></div>
+      <span data-i18n="picker_3d">3D Rechner</span>
+    </button>
+    <button class="picker-item" data-app="geometry">
+      <div class="picker-circle"><img src="assets/icons/picker-geometry.svg" width="40" height="40" alt=""></div>
+      <span data-i18n="picker_geometry">Geometrie</span>
+    </button>
+    <button class="picker-item" data-app="cas">
+      <div class="picker-circle"><img src="assets/icons/picker-cas.svg" width="40" height="40" alt=""></div>
+      <span data-i18n="picker_cas">CAS</span>
+    </button>
+    <button class="picker-item" data-app="probability">
+      <div class="picker-circle"><img src="assets/icons/picker-probability.svg" width="40" height="40" alt=""></div>
+      <span data-i18n="picker_probability">Wahrscheinlichkeit</span>
+    </button>
+    <button class="picker-item" data-app="scientific">
+      <div class="picker-circle"><img src="assets/icons/picker-calculator.svg" width="40" height="40" alt=""></div>
+      <span data-i18n="picker_calculator">Taschenrechner</span>
+    </button>
+  </div>
+</div>
+
+<!-- General settings tab (DefaultPropertiesFactory#createGeneralProperties,
+     mobile branch - no Save/Restore Settings row). Language + Rounding map
+     to real public API calls; Coordinates/Angle Unit have no public setter
+     in the source and stay display-only; Font Size uses the documented
+     setFontSize() applet-wide call, which is a different feature from this
+     panel's internal font-size property but the closest real behaviour
+     available. -->
+<div class="overlay settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <div class="settings-header">
+      <span data-i18n="settings_title">Einstellungen</span>
+      <button class="settings-close" id="settingsClose" aria-label="Schließen"><img src="assets/icons/clear.svg" width="20" height="20" alt=""></button>
+    </div>
+    <div class="settings-body">
+      <label class="settings-field">
+        <span class="settings-field-label" data-i18n="Language">Sprache</span>
+        <select id="settingLanguage">
+          <option value="de" selected>German / Deutsch</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+      <label class="settings-field">
+        <span class="settings-field-label" data-i18n="Rounding">Runden</span>
+        <select id="settingRounding">
+          <optgroup label="Dezimalstellen" id="roundingDecimalGroup">
+            <option value="0">0 Dezimalstellen</option>
+            <option value="1">1 Dezimalstelle</option>
+            <option value="2">2 Dezimalstellen</option>
+            <option value="3">3 Dezimalstellen</option>
+            <option value="4">4 Dezimalstellen</option>
+            <option value="5">5 Dezimalstellen</option>
+            <option value="10">10 Dezimalstellen</option>
+            <option value="13" selected>13 Dezimalstellen</option>
+            <option value="15">15 Dezimalstellen</option>
+          </optgroup>
+          <optgroup label="Signifikante Stellen" id="roundingSigGroup">
+            <option value="3s">3 signifikante Stellen</option>
+            <option value="5s">5 signifikante Stellen</option>
+            <option value="10s">10 signifikante Stellen</option>
+            <option value="15s">15 signifikante Stellen</option>
+          </optgroup>
+        </select>
+      </label>
+      <label class="settings-field">
+        <span class="settings-field-label" data-i18n="Coordinates">Koordinaten</span>
+        <select id="settingCoords">
+          <option value="cartesian" selected>A = (x, y)</option>
+          <option value="austrian">A(x | y)</option>
+          <option value="french">A: (x, y)</option>
+        </select>
+      </label>
+      <label class="settings-field">
+        <span class="settings-field-label" data-i18n="AngleUnit">Winkeleinheit</span>
+        <select id="settingAngle">
+          <option value="deg" selected data-i18n="Degree">Grad</option>
+          <option value="rad" data-i18n="Radiant">Radiant</option>
+          <option value="dms" data-i18n="DegreesMinutesSeconds">Grad, Minuten, Sekunden</option>
+        </select>
+      </label>
+      <label class="settings-field">
+        <span class="settings-field-label" data-i18n="settings_fontsize">Schriftgröße</span>
+        <select id="settingFontSize">
+          <option value="12">12 pt</option>
+          <option value="14">14 pt</option>
+          <option value="16" selected>16 pt</option>
+          <option value="18">18 pt</option>
+          <option value="20">20 pt</option>
+          <option value="24">24 pt</option>
+        </select>
+      </label>
     </div>
   </div>
-
-  <!-- calculator picker screen -->
-  <div class="picker-screen" id="pickerScreen">
-    <button class="picker-close" id="pickerClose"><img src="assets/icons/clear.svg" width="26" height="26" alt=""></button>
-    <h1 data-i18n="picker_title">GeoGebra Rechner wählen</h1>
-    <div class="picker-grid">
-      <button class="picker-item selected">
-        <div class="picker-circle"><img src="assets/icons/picker-graphing.svg" width="40" height="40" alt=""></div>
-        <span data-i18n="picker_graphing">Grafikrechner</span>
-      </button>
-      <button class="picker-item">
-        <div class="picker-circle"><img src="assets/icons/picker-3d.svg" width="40" height="40" alt=""></div>
-        <span data-i18n="picker_3d">3D Rechner</span>
-      </button>
-      <button class="picker-item">
-        <div class="picker-circle"><img src="assets/icons/picker-geometry.svg" width="40" height="40" alt=""></div>
-        <span data-i18n="picker_geometry">Geometrie</span>
-      </button>
-      <button class="picker-item">
-        <div class="picker-circle"><img src="assets/icons/picker-cas.svg" width="40" height="40" alt=""></div>
-        <span data-i18n="picker_cas">CAS</span>
-      </button>
-      <button class="picker-item">
-        <div class="picker-circle"><img src="assets/icons/picker-probability.svg" width="40" height="40" alt=""></div>
-        <span data-i18n="picker_probability">Wahrscheinlichkeit</span>
-      </button>
-      <button class="picker-item">
-        <div class="picker-circle"><img src="assets/icons/picker-calculator.svg" width="40" height="40" alt=""></div>
-        <span data-i18n="picker_calculator">Taschenrechner</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- settings panel (real content from GeoGebra's "Allgemein" settings tab:
-       Sprache/Runden/Koordinaten/Winkeleinheit/Schriftgröße). Sprache, Runden
-       and Schriftgröße are wired to the real engine (setLanguage/setRounding/
-       setFont); Koordinaten and Winkeleinheit have no public API hook, so
-       they stay visual-only for now. -->
-  <div class="settings-overlay" id="settingsOverlay">
-    <div class="settings-panel">
-      <div class="settings-header">
-        <span data-i18n="settings_title">Einstellungen</span>
-        <button class="settings-close" id="settingsClose" aria-label="Schließen"><img src="assets/icons/clear.svg" width="20" height="20" alt=""></button>
-      </div>
-      <div class="settings-body">
-        <label class="settings-field">
-          <span class="settings-field-label" data-i18n="settings_language">Sprache</span>
-          <select id="settingLanguage">
-            <option value="de" selected>German / Deutsch</option>
-            <option value="en">English</option>
-          </select>
-        </label>
-        <label class="settings-field">
-          <span class="settings-field-label" data-i18n="settings_rounding">Runden</span>
-          <select id="settingRounding">
-            <option value="0" data-decimals="0">0 Dezimalstellen</option>
-            <option value="2" data-decimals="2">2 Dezimalstellen</option>
-            <option value="3" data-decimals="3">3 Dezimalstellen</option>
-            <option value="4" data-decimals="4">4 Dezimalstellen</option>
-            <option value="5" data-decimals="5">5 Dezimalstellen</option>
-            <option value="10" data-decimals="10">10 Dezimalstellen</option>
-            <option value="13" data-decimals="13" selected>13 Dezimalstellen</option>
-            <option value="15" data-decimals="15">15 Dezimalstellen</option>
-          </select>
-        </label>
-        <label class="settings-field">
-          <span class="settings-field-label" data-i18n="settings_coords">Koordinaten</span>
-          <select id="settingCoords">
-            <option value="cartesian" selected>A = (x, y)</option>
-            <option value="polar">A = (r; φ)</option>
-            <option value="complex">A = x + yi</option>
-          </select>
-        </label>
-        <label class="settings-field">
-          <span class="settings-field-label" data-i18n="settings_angle">Winkeleinheit</span>
-          <select id="settingAngle">
-            <option value="deg" selected data-i18n="settings_degrees">Grad</option>
-            <option value="rad" data-i18n="settings_radians">Radiant</option>
-          </select>
-        </label>
-        <label class="settings-field">
-          <span class="settings-field-label" data-i18n="settings_fontsize">Schriftgröße</span>
-          <select id="settingFontSize">
-            <option value="12">12 pt</option>
-            <option value="14">14 pt</option>
-            <option value="16" selected>16 pt</option>
-            <option value="18">18 pt</option>
-            <option value="20">20 pt</option>
-            <option value="24">24 pt</option>
-          </select>
-        </label>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <script src="https://www.geogebra.org/apps/deployggb.js"></script>

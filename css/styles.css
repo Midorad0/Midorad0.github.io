@@ -1,730 +1,405 @@
+/* Colors taken verbatim from the real GeoGebra web source:
+   web/web/src/main/resources/scss/colors.scss + colorMap.scss
+   (Suite vendor color = purple(600); exam states = teal-default /
+   exam-red / exam-lock; picker "selected" = purple(100)). */
 :root {
-  /* exact tokens from geogebra-main/source (colors.css / component-styles.css) */
-  --purple: #6557d2;
-  --purple-dark: #5145a8;
-  --purple-light-bg: #f3f0ff;
-  --purple-selection: rgba(101, 87, 210, 0.2);
-  --grey-circle-bg: #eff0f2;
-  --text-dark: #1c1c1f;
-  /* neutral-700 / neutral-600 from the real fg-neutral-* scale */
-  --text-grey: #6e6d73;
-  --text-grey-soft: #85848a;
-  --divider: #e4e4e4;
-  --hover-tint: #f3f2f7;
-  --hover-tint-selected: #f3f0ff;
-  --statusbar-bg: #fcfcfd;
-  --overlay-dim: rgba(0, 0, 0, 0.45);
-  --ios-alert-bg: rgba(46, 46, 49, 0.94);
-  --exam-teal: #008475;
-  --dialog-radius: 24px;
-  --btn-radius: 20px;
-  --dialog-shadow: 0 6px 32px -2px rgba(133, 132, 138, 0.16), 0 4px 12px -1px rgba(133, 132, 138, 0.06);
-  --rail-elevation: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 5px 0 rgba(0, 0, 0, 0.14);
-  --ease-standard: cubic-bezier(0, 0, 0.2, 1);
-  --unit: 70px;
-  --minor: 14px;
+  --purple-100: #F3F0FF;
+  --purple-600: #6557D2;
+  --teal-default: #008475;
+  --exam-red: #D32F2F;
+  --exam-lock: #007AFF;
+  --text-dark: #1a1a1a;
+  --text-grey: #5f6368;
+  --border-grey: #e0e0e0;
+  --grey-bg: #f5f5f5;
+  --grey-circle-bg: #eceff1;
+
+  /* header.scss: $small_header_height: 48px (the compact variant, used
+     throughout this port since it targets a tablet-sized single-screen app) */
+  --header-height: 48px;
+  /* dialog-styles.scss .header-open-landscape.compact: width: 56px */
+  --rail-width: 56px;
 }
 
 * { box-sizing: border-box; }
+/* Author rules like ".exam-panel { display: flex }" have equal specificity
+   to the UA stylesheet's "[hidden] { display: none }" and, being author
+   styles, win regardless of source order - so the [hidden] attribute would
+   silently stop working on any element that also gets a "display" value
+   from a class rule. Force it to always win. */
+[hidden] { display: none !important; }
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   background: #fff;
-  /* real stack (general.css/app-header.css): "geogebra-sans-serif" isn't an
-     actual @font-face in the source, so it falls straight through to
-     Helvetica Neue */
-  font-family: "geogebra-sans-serif", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: var(--text-dark);
-  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
 }
 
-button { font-family: inherit; cursor: pointer; }
-
-.device {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  min-height: 560px;
-  overflow: hidden;
-  background: #fff;
+.app-shell {
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  /* Edge-to-edge like the native app: fill all the way into the iPad/iPhone
-     notch, rounded corners and home indicator with our own white background
-     instead of leaving those regions to the OS (which paints them black for
-     a page that never opts in via viewport-fit=cover) — that black fringe is
-     what reads as "black bars" around the app. Rail/header/content still sit
-     inset from the real edges via the padding below. */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  box-sizing: border-box;
-}
-
-/* ---------------- app shell ---------------- */
-.app {
-  flex: 1;
-  display: flex;
-  min-height: 0;
-  position: relative;
-  z-index: 1;
-}
-
-/* NavigationRail: exact metrics from web/web/war/css/toolbar-styles.css —
-   72px landscape width, #fff background, no border (elevation via
-   box-shadow instead), z-index raised above the graphics view so the
-   shadow actually renders on top of it. */
-.icon-rail {
-  flex: 0 0 72px;
   background: #fff;
-  position: relative;
-  z-index: 2;
-  box-shadow: var(--rail-elevation);
+}
+
+/* ================= GlobalHeader ================= */
+.gg-header {
+  height: var(--header-height);
+  min-height: var(--header-height);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding-top: 12px;
-  gap: 2px;
-  transition: background-color 0.2s var(--ease-standard);
+  gap: 4px;
+  padding: 0 6px;
+  background: #fff;
+  border-bottom: 1px solid var(--border-grey);
+  position: relative;
+  z-index: 20;
 }
-.hamburger-btn {
-  width: 40px;
-  height: 40px;
+.header-btn {
+  width: 36px;
+  height: 36px;
   border: none;
   background: transparent;
-  color: var(--text-dark);
-  opacity: 0.54;
-  border-radius: 8px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  transition: background-color 0.12s ease, opacity 0.12s ease;
+  cursor: pointer;
+  flex: none;
 }
-.hamburger-btn:hover { background: var(--hover-tint); opacity: 0.8; }
+.header-btn:hover, .header-logo:hover { background: var(--grey-bg); }
+.header-logo {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: none;
+}
+/* app-header.scss .compact hides .appName */
+.header-appname { display: none; }
 
-/* exam mode active: navigation rail turns teal (colors.$teal-default from the
-   real source) with a running timer, matching NavigationRail's examOk state */
-.icon-rail.exam-active {
-  background: var(--exam-teal);
+.app-picker-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px 0 8px;
+  border: 1px solid var(--border-grey);
+  border-radius: 16px;
+  background: #fff;
+  font-size: 13px;
+  color: var(--text-dark);
+  cursor: pointer;
+  margin-left: 2px;
 }
-.icon-rail.exam-active .hamburger-btn,
-.icon-rail.exam-active .rail-item {
-  color: #fff;
-  opacity: 1;
-}
-.icon-rail.exam-active .rail-item img,
-.icon-rail.exam-active .hamburger-btn img {
-  filter: brightness(0) invert(1);
-}
-.icon-rail.exam-active .hamburger-btn:hover,
-.icon-rail.exam-active .rail-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
+.app-picker-pill:hover { background: var(--grey-bg); }
 
+.header-buttons { display: flex; align-items: center; margin-left: auto; }
+
+/* exam-panel: GlobalHeader#addExamTimer markup */
+.exam-panel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 0 8px;
+}
+.exam-timer-icon { opacity: 0.8; }
+.exam-timer { font-size: 14px; font-weight: 600; color: var(--text-dark); min-width: 34px; }
+
+/* ================= body: rail + ggb ================= */
+.app-body { flex: 1; display: flex; min-height: 0; }
+
+.nav-rail {
+  width: var(--rail-width);
+  min-width: var(--rail-width);
+  background: #fff;
+  border-right: 1px solid var(--border-grey);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: 6px;
+  transition: background-color 0.2s ease;
+}
 .rail-item {
   border: none;
   background: transparent;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   padding: 10px 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  cursor: pointer;
   color: var(--text-dark);
-  opacity: 0.54;
-  transition: background-color 0.12s ease, opacity 0.12s ease;
 }
-.rail-item:hover { background: var(--hover-tint); }
-.rail-item span {
-  font-size: 10.5px;
-  line-height: 1.15;
-  text-align: center;
-}
-.rail-item.active {
-  color: var(--purple);
-  opacity: 1;
-}
-.rail-item.active:hover { background: var(--hover-tint-selected); }
-.rail-item.active svg { color: var(--purple); }
-.rail-item svg { color: inherit; }
+.rail-item span { font-size: 10px; line-height: 1.15; text-align: center; }
+.rail-item .rail-icon { transition: filter 0.15s ease; }
+/* NavigationRail#setSelected: selected icon tinted with the vendor primary
+   color (purple 600) in normal mode; unselected = black (default SVG fill).
+   Both nav-rail icons and text flip to white in exam mode, see below. */
+.rail-item.active { color: var(--purple-600); }
+.rail-item.active .rail-icon { filter: invert(28%) sepia(59%) saturate(1737%) hue-rotate(226deg) brightness(90%) contrast(92%); }
+.rail-item-disabled { opacity: 0.35; cursor: not-allowed; }
 
-.ggb-wrap {
+.nav-rail.exam-ok, .nav-rail.exam-cheat {
+  border-right: none;
+}
+.nav-rail.exam-ok { background: var(--teal-default); }
+.nav-rail.exam-cheat { background: var(--exam-red); }
+.nav-rail.exam-ok .rail-item, .nav-rail.exam-cheat .rail-item { color: #fff; }
+.nav-rail.exam-ok .rail-item.active, .nav-rail.exam-cheat .rail-item.active { color: #fff; }
+.nav-rail.exam-ok .rail-icon, .nav-rail.exam-cheat .rail-icon,
+.nav-rail.exam-ok .rail-item.active .rail-icon, .nav-rail.exam-cheat .rail-item.active .rail-icon {
+  filter: brightness(0) invert(1);
+}
+
+.ggb-area {
+  position: relative;
   flex: 1;
-  display: flex;
-  flex-direction: column;
   min-width: 0;
-}
-
-/* ---------------- header bar (.GeoGebraHeader, compact/48px variant) ------
-   Real source: white background, 1px #dcdcdc bottom border + elevation
-   shadow, 48px tall in compact mode. Normally just hosts the settings
-   button; while exam mode is active the settings button hides and the
-   exam panel (timer + info button) takes its place at the right edge —
-   the bar itself stays white, only the icon rail recolors. */
-.app-header {
-  flex: 0 0 48px;
-  background: #fff;
-  border-bottom: 1px solid #dcdcdc;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 12px;
-}
-
-.ggb-content {
-  flex: 1;
-  position: relative;
   min-height: 0;
 }
-.ggb-container {
-  position: absolute;
-  inset: 0;
-  /* !important defends against GeoGebra's own embed script, which stamps an
-     inline pixel width/height onto this exact element at inject time (see
-     resizeGgb() in app.js) — without this, that inline size wins the cascade
-     and the applet gets stuck at whatever (often too-small) size it measured
-     at load, leaving a dead grey/white gap where the algebra view and
-     graphics canvas should extend to fill the pane. */
-  width: 100% !important;
-  height: 100% !important;
-}
+.ggb-container { position: absolute; inset: 0; }
 .ggb-loading {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-grey-soft);
-  font-size: 15px;
+  color: var(--text-grey);
+  font-size: 14px;
+  background: #fff;
   pointer-events: none;
-  z-index: 1;
-}
-.ggb-loading[hidden] { display: none; }
-
-.top-gear-btn {
-  border: none;
-  background: transparent;
-  color: var(--text-dark);
-  opacity: 0.54;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.12s ease, opacity 0.12s ease;
-}
-.top-gear-btn:hover { background: var(--hover-tint); opacity: 0.8; }
-.top-gear-btn[hidden] { display: none; }
-
-/* exam panel: mirrors GlobalHeader.addExamTimer's #examId.examPanel —
-   timerImg (opacity .54, margin-right 8px) + examTimer (20px, compact
-   margin 12px 0) + examInfoBtn (compact margin 6px 18px). Header stays
-   white; icons/text stay dark, unlike the teal rail. */
-.exam-top-panel {
-  display: flex;
-  align-items: center;
-}
-.exam-top-panel[hidden] { display: none; }
-.exam-timer-icon { opacity: 0.54; margin-right: 8px; }
-.exam-timer-label {
-  font-size: 20px;
-  color: var(--text-dark);
-  font-variant-numeric: tabular-nums;
-}
-.exam-info-btn {
-  border: none;
-  background: transparent;
-  margin: 6px 18px;
-  padding: 4px;
-  opacity: 0.54;
-  border-radius: 8px;
-  display: flex;
-  transition: background-color 0.12s ease, opacity 0.12s ease;
-}
-.exam-info-btn:hover { background: var(--hover-tint); opacity: 0.8; }
-
-.rail-item img, .drawer-item img, .top-gear-btn img, .hamburger-btn img {
-  display: block;
 }
 
-/* ---------------- drawer (MainMenu / .floatingMenuView) ----------------
-   Real source animates the CSS `left` property, not transform: translateX
-   — open uses cubic-bezier(0,0,0.2,1) over .25s, close the same easing over
-   .2s. The overlay stays in the DOM/layout at all times and is toggled via
-   opacity + pointer-events so the transition can actually play (display:none
-   would skip it). */
-.drawer-overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--overlay-dim);
-  z-index: 30;
+/* ================= toast ================= */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(12px);
+  background: rgba(30,30,30,0.92);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-size: 13px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 999;
 }
-.drawer-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-  transition-duration: 0.25s;
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ================= overlays ================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 100;
 }
+.overlay.open { opacity: 1; pointer-events: auto; }
+
+/* drawer */
+.drawer-overlay { justify-content: flex-start; }
 .drawer {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -320px;
-  width: 320px;
-  max-width: 82%;
-  background: #ffffff;
-  box-shadow: none;
-  padding: 26px 0 20px;
+  width: 300px;
+  max-width: 82vw;
+  height: 100%;
+  background: #fff;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  transform: translateX(-16px);
+  transition: transform 0.18s ease;
   overflow-y: auto;
-  transition: left 0.2s var(--ease-standard), box-shadow 0.2s var(--ease-standard);
+  padding-bottom: 12px;
 }
-.drawer-overlay.open .drawer {
-  left: 0;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
-  transition-duration: 0.25s;
-}
+.drawer-overlay.open .drawer { transform: translateX(0); }
 .drawer-header {
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 600;
-  padding: 4px 28px 18px;
-  border-bottom: 1px solid var(--divider);
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid var(--border-grey);
   margin-bottom: 6px;
 }
 .drawer-item {
-  width: 100%;
-  border: none;
-  background: transparent;
   display: flex;
   align-items: center;
   gap: 16px;
-  height: 48px;
-  padding: 0 28px;
-  font-size: 16px;
-  color: var(--text-dark);
-  text-align: left;
-  border-radius: 0 24px 24px 0;
-  transition: background-color 0.12s ease;
-}
-.drawer-item img { opacity: 0.54; }
-.drawer-item svg { color: var(--text-grey); flex: 0 0 auto; }
-.drawer-item:hover { background: var(--hover-tint); }
-.drawer-divider {
+  width: 100%;
   border: none;
-  border-top: 1px solid var(--divider);
-  margin: 8px 28px;
+  background: transparent;
+  padding: 12px 20px;
+  font-size: 15px;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-align: left;
 }
+.drawer-item:hover { background: var(--grey-bg); }
+.drawer-divider { border: none; border-top: 1px solid var(--border-grey); margin: 8px 0; }
 
-/* ---------------- exam prep modal (ComponentDialog / .dialogComponent) ----
-   Real dialog shell has no CSS fade/scale of its own — GWT's PopupPanel
-   plays a 200ms expand-from-center resize animation instead. We approximate
-   that with a scale+opacity transition of the same duration, since a pure
-   CSS transition can't reproduce GWT's clip-resize exactly. Overlay again
-   stays laid out and is toggled via opacity so the transition can play. */
-.modal-overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--overlay-dim);
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-.modal-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
+/* generic modal dialogs */
+.modal-overlay { align-items: center; justify-content: center; }
 .modal-box {
   background: #fff;
-  border-radius: var(--dialog-radius);
-  width: 427px;
-  max-width: 88%;
-  padding: 24px 24px 8px;
-  box-shadow: var(--dialog-shadow);
-  transform: scale(0.85);
-  opacity: 0;
-  transition: transform 0.2s var(--ease-standard), opacity 0.2s var(--ease-standard);
+  border-radius: 14px;
+  padding: 24px;
+  max-width: 380px;
+  width: 88vw;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  transform: scale(0.96);
+  transition: transform 0.18s ease;
 }
-.modal-overlay.open .modal-box {
-  transform: scale(1);
-  opacity: 1;
-}
-/* real .dialogTitle: font-size:24px;font-weight:400;line-height:32px —
-   normal weight, not bold (dialog-styles.css) */
-.modal-box h2 {
-  margin: 0 0 16px;
-  font-size: 24px;
-  line-height: 32px;
-  font-weight: 400;
-  color: #1c1c1f;
-}
-/* real body text: BaseWidgetFactory.newSecondaryText -> Shades.NEUTRAL_700
-   (.fg-neutral-700{color:#6e6d73}), font-size:100% (16px base) */
-.modal-box p {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #6e6d73;
-}
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 24px 0 16px;
-}
-/* exact values from component-styles.css .materialTextButton/.materialFilledButton
-   (BaseWidgetFactory.newTextButton/newFilledButton, what ComponentDialog's
-   buttons actually use): 40px tall, 14px text, 20px line-height, pill radius,
-   text-button color is the DARK purple variant, not the main accent. */
+.modal-overlay.open .modal-box { transform: scale(1); }
+.modal-box h2 { margin: 0 0 12px; font-size: 18px; color: var(--text-dark); }
+.modal-box p { margin: 0 0 20px; font-size: 14px; color: var(--text-grey); line-height: 1.5; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 20px; }
 .link-btn {
   border: none;
   background: transparent;
-  color: var(--purple-dark);
   font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.1px;
-  line-height: 20px;
-  height: 40px;
-  min-width: 64px;
-  padding: 0 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--btn-radius);
-  margin-left: 0;
-  transition: background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  color: var(--text-grey);
+  cursor: pointer;
+  padding: 6px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
-.link-btn:hover { background: var(--purple-light-bg); }
-.link-btn-primary {
-  background: var(--purple);
+.link-btn-primary { color: var(--purple-600); }
+
+/* exam log / summary dialog */
+.exam-log-box { width: 92vw; max-width: 420px; padding: 0; overflow: hidden; }
+.exam-log-titlepanel {
+  background: var(--teal-default);
   color: #fff;
-}
-.link-btn-primary:hover { background: var(--purple-dark); }
-
-/* exam-exit confirmation is the narrower "examExitConfDialog" variant */
-.exam-exit-box { width: 326px; }
-
-/* ---------------- iOS system alert ----------------
-   This one is genuinely rendered by iPadOS itself (Guided Access / Assessment
-   Mode confirmation), not by GeoGebra — there is no source CSS to match here,
-   and a web page cannot trigger a real iPadOS system dialog or push a real
-   notification to the device (no such API exists in the browser). This stays
-   a best-effort visual mock of the native alert, now with the springy
-   scale-in native alerts use. */
-.ios-alert-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 50;
+  padding: 18px 22px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
+  gap: 10px;
 }
-.ios-alert-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-.ios-alert {
-  width: 320px;
-  max-width: 85%;
-  background: var(--ios-alert-bg);
-  backdrop-filter: blur(20px);
-  border-radius: 14px;
-  overflow: hidden;
-  text-align: center;
-  color: #fff;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-  transform: scale(1.15);
-  opacity: 0;
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
-}
-.ios-alert-overlay.open .ios-alert {
-  transform: scale(1);
-  opacity: 1;
-}
-.ios-alert h3 {
-  margin: 18px 18px 8px;
-  font-size: 15px;
-  font-weight: 700;
-}
-.ios-alert p {
-  margin: 0 16px 16px;
-  font-size: 12.5px;
-  line-height: 1.4;
-  color: rgba(255,255,255,0.85);
-}
-.ios-alert-actions {
+.exam-log-titlepanel.cheating { background: var(--exam-red); }
+.exam-log-title { display: flex; flex-direction: column; gap: 2px; }
+.exam-log-calctype { font-size: 16px; font-weight: 700; }
+.exam-log-status { font-size: 12px; opacity: 0.9; }
+.exam-alert-icon { filter: brightness(0) invert(1); }
+.exam-log-content { padding: 18px 22px 4px; }
+.exam-log-teacher { margin: 0 0 14px; font-size: 13px; color: var(--text-grey); }
+.exam-log-row {
   display: flex;
-  border-top: 1px solid rgba(255,255,255,0.2);
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-grey);
+  font-size: 14px;
 }
-.ios-alert-actions button {
-  flex: 1;
-  border: none;
-  background: transparent;
-  color: #fff;
-  font-size: 15px;
-  padding: 11px 0;
+.exam-log-row:last-child { border-bottom: none; }
+.exam-log-label { color: var(--text-grey); }
+.exam-log-value { color: var(--text-dark); font-weight: 600; }
+.exam-log-activity {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  background: var(--grey-bg);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-dark);
+  white-space: pre-line;
+  font-family: inherit;
+  max-height: 120px;
+  overflow-y: auto;
 }
-.ios-alert-actions button:first-child {
-  border-right: 1px solid rgba(255,255,255,0.2);
-}
-#iosAlertYes { font-weight: 700; }
+.exam-log-box .modal-actions { padding: 14px 22px 20px; }
 
-/* ---------------- calculator picker screen ---------------- */
+/* ================= calculator picker ================= */
 .picker-screen {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: #fff;
-  z-index: 60;
+  z-index: 200;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 60px 20px 20px;
+  transform: translateY(12px);
   opacity: 0;
   pointer-events: none;
-  transform: scale(1.03);
-  transition: opacity 0.2s ease, transform 0.2s var(--ease-standard);
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
-.picker-screen.open {
-  opacity: 1;
-  pointer-events: auto;
-  transform: scale(1);
-}
+.picker-screen.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.picker-screen h1 { font-size: 20px; color: var(--text-dark); margin: 0 0 8px; }
 .picker-close {
   position: absolute;
-  top: 20px;
-  left: 22px;
+  top: 16px;
+  right: 16px;
   border: none;
   background: transparent;
-  color: var(--text-grey);
-  opacity: 0.54;
-  padding: 6px;
-  border-radius: 8px;
-  transition: background-color 0.12s ease, opacity 0.12s ease;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
 }
-.picker-close:hover { background: var(--hover-tint); opacity: 0.8; }
-.picker-screen h1 {
-  margin-top: 16vh;
-  font-size: 26px;
-  font-weight: 500;
-  color: var(--text-dark);
-}
+.picker-close:hover { background: var(--grey-bg); }
 .picker-grid {
   display: flex;
-  gap: 46px;
-  margin-top: 48px;
+  gap: 40px;
+  margin-top: 40px;
   flex-wrap: wrap;
   justify-content: center;
   padding: 0 24px;
+  max-width: 640px;
 }
-.picker-item {
-  border: none;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
+.picker-item { border: none; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; }
 .picker-circle {
-  width: 118px;
-  height: 118px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   background: var(--grey-circle-bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.15s ease;
 }
-.picker-item.selected .picker-circle { background: var(--purple-light-bg); }
-.picker-item span {
-  font-size: 15px;
-  color: var(--text-dark);
-  text-align: center;
-  max-width: 110px;
-}
+/* CalculatorSwitcherDialog: .calcBtn.selected .imgHolder { background: purple(100) } */
+.picker-item.selected .picker-circle { background: var(--purple-100); }
+.picker-item span { font-size: 14px; color: var(--text-dark); text-align: center; max-width: 110px; }
 
-/* ---------------- exam feedback / summary dialog ----------------
-   Mirrors the real ExamLogAndExitDialog: a teal .titlePanel header
-   (background-color:#008475, border-radius:24px 24px 0 0, padding:20px 24px)
-   containing calc type + status, then a white .contentPanel
-   (padding:20px 24px 24px 24px), then a single text button bottom-right in
-   an 8px-padded .dialogPanel — no filled button here, unlike the other
-   dialogs. The dialog shell itself has no padding since the title panel
-   owns the top corners. */
-.exam-feedback-box {
-  width: 316px;
-  padding: 0;
-  overflow: hidden;
-}
-.exam-feedback-titlepanel {
-  background: var(--exam-teal);
-  padding: 20px 24px;
-  border-radius: var(--dialog-radius) var(--dialog-radius) 0 0;
-  color: #fff;
-}
-/* real hierarchy is the opposite of what it looks like at a glance: calcType
-   is the small muted caption ON TOP, examTitle/status is the bigger solid-
-   white line below it — .titlePanel .calcType{font-size:75%;color:rgba(255,
-   255,255,.7)} vs .titlePanel .examTitle{font-size:100%;color:#fff}, stacked
-   (two plain Labels added to the panel, not a row). */
-.exam-feedback-title {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.exam-feedback-calctype {
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.7);
-}
-.exam-feedback-status {
-  font-size: 16px;
-  font-weight: 400;
-  color: #fff;
-}
-.exam-feedback-content {
-  padding: 20px 24px 4px;
-}
-/* only the exit/summary dialog gets the fixed 252px scrollable content area
-   (.examExitDialog .contentPanel{height:252px}) — the log dialog (fewer
-   rows, shown while the exam is still running) is auto-height instead
-   (.examLogDialog .contentPanel{height:unset}). */
-#examFeedbackOverlay .exam-feedback-content {
-  height: 252px;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-.exam-feedback-teacher {
-  margin: 0 0 18px;
-  font-size: 14px;
-  color: var(--text-grey);
-}
-/* stacked caption+value blocks, no divider lines between them — matches
-   ExamLogAndExitDialog.buildBlock: .captionStyle{margin-top:20px} on the
-   label, no border-bottom anywhere in dialog-styles.css. */
-.exam-feedback-rows {
-  display: flex;
-  flex-direction: column;
-}
-.exam-feedback-row {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 20px;
-}
-.exam-feedback-row:first-child { margin-top: 0; }
-.exam-feedback-label {
-  font-size: 12px;
-  color: #6e6d73;
-}
-.exam-feedback-value {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-dark);
-}
-.exam-feedback-box .modal-actions {
-  padding: 8px;
-}
-
-/* ---------------- settings panel (.floatingSideSheet) ----------------
-   Real content: Sprache/Runden/Koordinaten/Winkeleinheit/Schriftgröße from
-   GeoGebra's "Allgemein" tab. The real side sheet is 400px wide and slides
-   in from the right edge via @keyframes (not a plain transition): settingsIn
-   0.25s right:-500px→0, settingsOut 0.2s the reverse. */
-.settings-overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--overlay-dim);
-  z-index: 45;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-.settings-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-  transition-duration: 0.25s;
-}
+/* ================= settings ================= */
+.settings-overlay { align-items: center; justify-content: center; }
 .settings-panel {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: -500px;
-  width: 400px;
-  max-width: 86%;
   background: #fff;
-  box-shadow: none;
-  display: flex;
-  flex-direction: column;
-  animation: settingsOut 0.2s var(--ease-standard) forwards;
+  border-radius: 14px;
+  width: 92vw;
+  max-width: 420px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  transform: scale(0.96);
+  transition: transform 0.18s ease;
 }
-.settings-overlay.open .settings-panel {
-  animation: settingsIn 0.25s var(--ease-standard) forwards;
-}
-@keyframes settingsIn {
-  from { right: -500px; box-shadow: none; }
-  to { right: 0; box-shadow: -2px 0 24px rgba(0, 0, 0, 0.18); }
-}
-@keyframes settingsOut {
-  from { right: 0; box-shadow: -2px 0 24px rgba(0, 0, 0, 0.18); }
-  to { right: -500px; box-shadow: none; }
-}
+.settings-overlay.open .settings-panel { transform: scale(1); }
 .settings-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 24px;
-  border-bottom: 1px solid var(--divider);
-  font-size: 19px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-grey);
+  font-size: 16px;
   font-weight: 600;
 }
-.settings-close {
-  border: none;
-  background: transparent;
-  color: var(--text-grey);
-  display: flex;
-  padding: 6px;
-  border-radius: 8px;
-  opacity: 0.54;
-  transition: background-color 0.12s ease, opacity 0.12s ease;
-}
-.settings-close:hover { background: var(--hover-tint); opacity: 0.8; }
-.settings-body {
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  overflow-y: auto;
-}
-.settings-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.settings-field-label {
-  font-size: 12px;
-  color: var(--text-grey-soft);
-}
-.settings-field select {
-  font: inherit;
-  font-size: 15px;
-  color: var(--text-dark);
-  padding: 10px 12px;
-  border: 1px solid var(--divider);
-  border-radius: 8px;
-  background: #fff;
-  appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16'><path d='M7 10l5 5 5-5' fill='none' stroke='%2355555a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
+.settings-close { border: none; background: transparent; cursor: pointer; border-radius: 50%; padding: 6px; }
+.settings-close:hover { background: var(--grey-bg); }
+.settings-body { padding: 8px 20px 20px; }
+.settings-field { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-grey); }
+.settings-field:last-child { border-bottom: none; }
+.settings-field-label { font-size: 14px; color: var(--text-dark); }
+.settings-field select { font-size: 14px; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--border-grey); background: #fff; max-width: 55%; }
+
+@media (max-width: 600px) {
+  .header-buttons, .app-picker-pill span { display: none; }
 }

@@ -2,43 +2,45 @@
   "use strict";
 
   // ---------------- i18n ----------------
-  // Small dictionary covering only our own chrome (rail, drawer, dialogs,
-  // picker, settings panel). The real engine underneath translates itself
-  // via ggbApplet.setLanguage().
+  // Every key here (except the ones explicitly marked "our own chrome, not a
+  // verified source string") is the real property key + German/English text
+  // pulled from menu.properties / menu_de.properties in the GeoGebra source
+  // (org.geogebra.common.jre.properties). The real engine underneath
+  // translates itself separately via ggbApplet.setLanguage().
   const I18N = {
     de: {
       app_name: "GeoGebra Rechner Suite",
       item_clear: "Alles löschen",
       item_open: "Öffnen",
       item_share: "Teilen",
-      item_export: "Bild exportieren",
-      item_exam: "Prüfungsmodus",
-      item_exam_end: "Prüfung beenden",
-      examLog_header: "Prüfungsprotokoll",
-      item_switch: "Rechner wechseln",
-      item_settings: "Einstellungen",
-      item_help: "Hilfe &amp; Feedback",
+      item_export: "Bild exportieren",           // exportImage
+      item_exam: "Prüfungsmodus",                // exam_menu_entry
+      item_exam_end: "Prüfung beenden",          // exam_menu_exit
+      examLog_header: "Prüfungsprotokoll",       // exam_log_header
+      item_switch: "Rechner wechseln",           // SwitchCalculator
+      item_settings: "Einstellungen",            // Settings
+      item_help: "Hilfe &amp; Feedback",         // HelpAndFeedback
       rail_algebra: "Algebra",
       rail_tools: "Werkzeuge",
       rail_table: "Tabelle",
       rail_spreadsheet: "Tabellenkalkul<br>ation",
-      examPrep_title: "Prüfungsmodus vorbereiten",
-      examPrep_body: "Aktiviere bitte den Flugmodus und deaktiviere deine Wi-Fi und Bluetooth Verbindung um weiterzumachen.",
+      rail_disabled_note: "Nur in der echten App verfügbar",
       btn_cancel: "Abbrechen",
-      btn_next: "Weiter",
-      iosAlert_title: "Einschränkung durch App bestätigen",
-      iosAlert_body: "GeoGebra möchte den Bewertungsmodus starten. Andere Apps können auf iPad erst wieder verwendet werden, wenn GeoGebra den Bewertungsmodus beendet. Möchtest du das zulassen?",
-      btn_no: "Nein",
-      btn_yes: "Ja",
-      examExit_title: "Prüfung beenden?",
-      examExit_body: "Willst du den Prüfungsmodus wirklich beenden?",
-      btn_end: "Beenden",
-      examFeedback_teacher: "Zeige diesen Bildschirm deiner Lehrkraft",
-      examFeedback_duration: "Dauer",
-      examFeedback_date: "Datum der Prüfung",
-      examFeedback_start: "Beginn der Prüfung",
-      examFeedback_end: "Ende der Prüfung",
+      btn_exit: "Beenden",
       btn_ok: "OK",
+      exam_menu_enter: "Prüfung starten",
+      exam_start_dialog_text: "Während der Prüfung werden die verstrichene Zeit und der Prüfungstyp angezeigt.",
+      exam_start_button: "Starten",
+      exam_exit_confirmation: "Willst du den Prüfungsmodus wirklich beenden?",
+      exam_log_show_screen_to_teacher: "Zeige diesen Bildschirm deiner Lehrkraft",
+      Duration: "Dauer",
+      exam_start_date: "Datum der Prüfung",
+      exam_start_time: "Beginn der Prüfung",
+      exam_end_time: "Ende der Prüfung",
+      exam_alert: "Alarm",
+      exam_started: "Prüfung gestartet",
+      exam_ended: "Prüfung beendet",
+      exam_left_app: "Fenster/App verlassen",    // our own event label - source names the mechanism (ExamUtil visibility/blur handlers) but not this exact string
       picker_title: "GeoGebra Rechner wählen",
       picker_graphing: "Grafikrechner",
       picker_3d: "3D Rechner",
@@ -47,15 +49,14 @@
       picker_probability: "Wahrscheinlichkeit",
       picker_calculator: "Taschenrechner",
       settings_title: "Einstellungen",
-      settings_language: "Sprache",
-      settings_rounding: "Runden",
-      settings_coords: "Koordinaten",
-      settings_angle: "Winkeleinheit",
-      settings_fontsize: "Schriftgröße",
-      settings_decimals: "Dezimalstellen",
-      settings_degrees: "Grad",
-      settings_radians: "Radiant",
-      exam_status_ok: "Prüfungsmodus: OK"
+      Language: "Sprache",
+      Rounding: "Runden",
+      Coordinates: "Koordinaten",
+      AngleUnit: "Winkeleinheit",
+      Degree: "Grad",
+      Radiant: "Radiant",
+      DegreesMinutesSeconds: "Grad, Minuten, Sekunden",
+      settings_fontsize: "Schriftgröße"          // our own wrapper label
     },
     en: {
       app_name: "GeoGebra Calculator Suite",
@@ -73,82 +74,71 @@
       rail_tools: "Tools",
       rail_table: "Table",
       rail_spreadsheet: "Spread<br>sheet",
-      examPrep_title: "Prepare Exam Mode",
-      examPrep_body: "Please turn on flight mode and turn off your Wi-Fi and Bluetooth connection to continue.",
+      rail_disabled_note: "Only available in the real app",
       btn_cancel: "Cancel",
-      btn_next: "Next",
-      iosAlert_title: "Confirm Restriction by App",
-      iosAlert_body: "GeoGebra would like to start Assessment Mode. Other apps won't be usable on iPad until GeoGebra ends Assessment Mode. Do you want to allow this?",
-      btn_no: "No",
-      btn_yes: "Yes",
-      examExit_title: "End Exam?",
-      examExit_body: "Do you really want to end exam mode?",
-      btn_end: "Exit",
-      examFeedback_teacher: "Show this screen to your teacher",
-      examFeedback_duration: "Duration",
-      examFeedback_date: "Exam date",
-      examFeedback_start: "Exam start",
-      examFeedback_end: "Exam end",
+      btn_exit: "Exit",
       btn_ok: "OK",
+      exam_menu_enter: "Start Exam",
+      exam_start_dialog_text: "Time elapsed and exam type will be shown during the exam.",
+      exam_start_button: "Start",
+      exam_exit_confirmation: "Do you really want to exit Exam Mode?",
+      exam_log_show_screen_to_teacher: "Show this screen to your teacher",
+      Duration: "Duration",
+      exam_start_date: "Exam date",
+      exam_start_time: "Exam start",
+      exam_end_time: "Exam end",
+      exam_alert: "Alert",
+      exam_started: "Exam started",
+      exam_ended: "Exam ended",
+      exam_left_app: "Window/app left",
       picker_title: "Choose GeoGebra Calculator",
-      picker_graphing: "Graphing Calculator",
+      picker_graphing: "Graphing",
       picker_3d: "3D Calculator",
       picker_geometry: "Geometry",
       picker_cas: "CAS",
       picker_probability: "Probability",
-      picker_calculator: "Scientific Calculator",
+      picker_calculator: "Scientific",
       settings_title: "Settings",
-      settings_language: "Language",
-      settings_rounding: "Rounding",
-      settings_coords: "Coordinates",
-      settings_angle: "Angle Unit",
-      settings_fontsize: "Font Size",
-      settings_decimals: "decimal places",
-      settings_degrees: "Degree",
-      settings_radians: "Radian",
-      exam_status_ok: "Exam Mode: OK"
+      Language: "Language",
+      Rounding: "Rounding",
+      Coordinates: "Coordinates",
+      AngleUnit: "Angle Unit",
+      Degree: "Degree",
+      Radiant: "Radians",
+      DegreesMinutesSeconds: "Degrees, minutes, seconds",
+      settings_fontsize: "Font Size"
     }
   };
 
   let currentLang = "de";
 
+  function dict() { return I18N[currentLang]; }
+
   function applyLanguage(lang) {
     currentLang = I18N[lang] ? lang : "de";
-    const dict = I18N[currentLang];
+    const d = dict();
     document.querySelectorAll("[data-i18n]").forEach((el) => {
       const key = el.dataset.i18n;
-      if (dict[key] !== undefined) el.innerHTML = dict[key];
-    });
-    document.querySelectorAll("#settingRounding option[data-decimals]").forEach((opt) => {
-      opt.textContent = `${opt.dataset.decimals} ${dict.settings_decimals}`;
+      if (d[key] !== undefined) el.innerHTML = d[key];
     });
     document.querySelectorAll("[data-i18n-title]").forEach((el) => {
       const key = el.dataset.i18nTitle;
-      if (dict[key] !== undefined) {
-        el.title = dict[key];
-        el.setAttribute("aria-label", dict[key]);
+      if (d[key] !== undefined) {
+        el.title = d[key];
+        el.setAttribute("aria-label", d[key]);
       }
     });
-    document.getElementById("hamburgerBtn").setAttribute(
-      "aria-label", currentLang === "de" ? "Menü öffnen" : "Open menu");
-    document.getElementById("settingsClose").setAttribute(
-      "aria-label", currentLang === "de" ? "Schließen" : "Close");
-    updateExamMenuItem();
+    document.getElementById("menuBtn").setAttribute("aria-label", currentLang === "de" ? "Menü öffnen" : "Open menu");
+    document.getElementById("settingsClose").setAttribute("aria-label", currentLang === "de" ? "Schließen" : "Close");
+    document.getElementById("appPickerLabel").textContent = d[SUITE_APPS[currentAppCode].key];
+    updateExamDrawerVisibility();
   }
 
   // ---------------- real GeoGebra engine (official embedding API) ----------------
-  // Our own hamburger/icon-rail/gear/drawer stay as the only visible chrome;
-  // everything below is the real, working math engine — not a recreation.
   let ggbApplet = null;
   const ggbLoading = document.getElementById("ggbLoading");
   const ggbContainer = document.getElementById("ggbContainer");
-  // Measure from the plain wrapper, not #ggbContainer itself: GGBApplet's
-  // embed script stamps an inline px width/height straight onto #ggbContainer
-  // at inject time and again on every internal reflow, so reading its own
-  // rect back would just echo whatever (often too-small) size it last set —
-  // the dead-space/black-bar bug. The wrapper is never touched by GGB, so its
-  // rect always reflects the real available space.
-  const ggbContent = document.getElementById("ggbContent");
+  const ggbArea = document.getElementById("ggbArea");
 
   function onGgbAppletLoaded() {
     ggbApplet = window.ggbApplet;
@@ -158,7 +148,7 @@
 
   function resizeGgb() {
     if (!ggbApplet) return;
-    const rect = ggbContent.getBoundingClientRect();
+    const rect = ggbArea.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
       const w = Math.round(rect.width);
       const h = Math.round(rect.height);
@@ -169,7 +159,7 @@
   }
 
   function initGgb() {
-    const rect = ggbContent.getBoundingClientRect();
+    const rect = ggbArea.getBoundingClientRect();
     const params = {
       appName: "suite",
       width: Math.max(320, Math.round(rect.width)),
@@ -197,259 +187,344 @@
     ggbInitStarted = true;
     initGgb();
   }
+  if (document.readyState === "complete") initGgbOnce();
+  else window.addEventListener("load", initGgbOnce);
+  window.addEventListener("resize", resizeGgb);
+  new ResizeObserver(resizeGgb).observe(ggbArea);
 
-  if (document.readyState === "complete") {
-    initGgbOnce();
-  } else {
-    window.addEventListener("load", initGgbOnce);
+  // ---------------- toast ----------------
+  const toastEl = document.getElementById("toast");
+  let toastTimer = null;
+  function showToast(text) {
+    toastEl.textContent = text;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
   }
 
-  window.addEventListener("resize", resizeGgb);
-  new ResizeObserver(resizeGgb).observe(ggbContent);
-
-  // ---------------- view/dialog switching ----------------
+  // ---------------- overlay bookkeeping ----------------
   const drawerOverlay = document.getElementById("drawerOverlay");
-  const examPrepOverlay = document.getElementById("examPrepOverlay");
-  const iosAlertOverlay = document.getElementById("iosAlertOverlay");
+  const examStartOverlay = document.getElementById("examStartOverlay");
   const examExitOverlay = document.getElementById("examExitOverlay");
-  const examFeedbackOverlay = document.getElementById("examFeedbackOverlay");
   const examLogOverlay = document.getElementById("examLogOverlay");
   const pickerScreen = document.getElementById("pickerScreen");
   const settingsOverlay = document.getElementById("settingsOverlay");
 
   function closeAllOverlays() {
-    drawerOverlay.classList.remove("open");
-    examPrepOverlay.classList.remove("open");
-    iosAlertOverlay.classList.remove("open");
-    examExitOverlay.classList.remove("open");
-    examFeedbackOverlay.classList.remove("open");
-    examLogOverlay.classList.remove("open");
+    [drawerOverlay, examStartOverlay, examExitOverlay, examLogOverlay, settingsOverlay].forEach((o) => o.classList.remove("open"));
     pickerScreen.classList.remove("open");
-    settingsOverlay.classList.remove("open");
   }
 
-  document.getElementById("hamburgerBtn").addEventListener("click", () => {
+  document.getElementById("menuBtn").addEventListener("click", () => {
     closeAllOverlays();
     drawerOverlay.classList.add("open");
   });
-  drawerOverlay.addEventListener("click", (e) => {
-    if (e.target === drawerOverlay) closeAllOverlays();
+  drawerOverlay.addEventListener("click", (e) => { if (e.target === drawerOverlay) closeAllOverlays(); });
+
+  document.getElementById("headerLogo").addEventListener("click", () => {
+    // GlobalHeader#initLogo: normally opens the GeoGebra homepage; disabled
+    // during exam in the source (logo href swapped to "#") - same here.
+    if (!examActive) window.open("https://www.geogebra.org", "_blank", "noopener");
   });
 
-  // real: while exam mode is active the File menu collapses to a single
-  // "Prüfung beenden" (exam_menu_exit) entry that jumps straight to the exit
-  // confirmation — no prep flow shown again. Our drawer's exam item mirrors
-  // that by swapping its icon/label (see startExam/endExam below) and
-  // branching here on whether an exam is currently running.
-  document.getElementById("examMenuItem").addEventListener("click", () => {
+  // ---------------- drawer: normal vs exam item sets ----------------
+  const drawerNormal = document.getElementById("drawerNormal");
+  const drawerExam = document.getElementById("drawerExam");
+  function updateExamDrawerVisibility() {
+    drawerNormal.hidden = examActive;
+    drawerExam.hidden = !examActive;
+  }
+
+  document.getElementById("clearAllItem").addEventListener("click", clearAll);
+  document.getElementById("clearAllItemExam").addEventListener("click", clearAll);
+  function clearAll() { if (ggbApplet) ggbApplet.reset(); closeAllOverlays(); }
+
+  document.getElementById("openItem").addEventListener("click", openFile);
+  document.getElementById("openItemExam").addEventListener("click", openFile);
+  const openFileInput = document.createElement("input");
+  openFileInput.type = "file";
+  openFileInput.accept = ".ggb,.ggs";
+  openFileInput.hidden = true;
+  document.body.appendChild(openFileInput);
+  function openFile() {
     closeAllOverlays();
-    if (examTimerHandle) {
-      examExitOverlay.classList.add("open");
-    } else {
-      examPrepOverlay.classList.add("open");
+    openFileInput.value = "";
+    openFileInput.click();
+  }
+  openFileInput.addEventListener("change", () => {
+    const file = openFileInput.files[0];
+    if (!file || !ggbApplet) return;
+    const reader = new FileReader();
+    reader.onload = () => ggbApplet.setBase64(String(reader.result).split(",")[1]);
+    reader.readAsDataURL(file);
+  });
+
+  function exportImageDataUri() {
+    if (!ggbApplet) return null;
+    return "data:image/png;base64," + ggbApplet.getPNGBase64(1, false, 300, false, false);
+  }
+  document.getElementById("exportImageItem").addEventListener("click", () => {
+    const uri = exportImageDataUri();
+    closeAllOverlays();
+    if (!uri) return;
+    const a = document.createElement("a");
+    a.href = uri;
+    a.download = "geogebra.png";
+    a.click();
+  });
+
+  document.getElementById("shareItem").addEventListener("click", async () => {
+    const uri = exportImageDataUri();
+    closeAllOverlays();
+    if (!uri) return;
+    const blob = await (await fetch(uri)).blob();
+    const file = new File([blob], "geogebra.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: dict().app_name }); } catch (e) { /* cancelled */ }
+      return;
     }
+    const a = document.createElement("a");
+    a.href = uri;
+    a.download = "geogebra.png";
+    a.click();
   });
-  document.getElementById("examPrepCancel").addEventListener("click", closeAllOverlays);
+  document.getElementById("headerShareBtn").addEventListener("click", () => document.getElementById("shareItem").click());
 
-  // "Weiter" is a test-only affordance: a browser cannot detect real flight-mode/
-  // Wi-Fi/Bluetooth state the way the native iPad app does, so this simulates the
-  // OS accepting it and moves on to the native confirmation alert, purely so the
-  // rest of the flow can be reviewed.
-  function advanceFromExamPrep() {
+  document.getElementById("helpItem").addEventListener("click", () => {
     closeAllOverlays();
-    iosAlertOverlay.classList.add("open");
-  }
-  document.getElementById("examPrepNext").addEventListener("click", advanceFromExamPrep);
-  // Test affordance requested on top of the real flow: since neither of these
-  // activation prompts can be driven by real OS state in a browser, clicking
-  // outside the box advances to the next step instead of just dismissing it,
-  // so the whole exam-activation sequence can be clicked through quickly.
-  examPrepOverlay.addEventListener("click", (e) => {
-    if (e.target === examPrepOverlay) advanceFromExamPrep();
+    // real FORUM_URL constant, org.geogebra.common.GeoGebraConstants
+    window.open("https://help.geogebra.org/", "_blank", "noopener");
   });
 
-  document.getElementById("switchCalcItem").addEventListener("click", () => {
-    closeAllOverlays();
-    pickerScreen.classList.add("open");
-  });
-  document.getElementById("pickerClose").addEventListener("click", closeAllOverlays);
-
-  // real: clears the construction via the engine, same as the native app's
-  // "Alles löschen" menu item
-  document.getElementById("clearAllItem").addEventListener("click", () => {
-    if (ggbApplet) ggbApplet.reset();
-    closeAllOverlays();
-  });
-
-  // ---------------- settings panel (real content: Sprache/Runden/
-  // Koordinaten/Winkeleinheit/Schriftgröße from GeoGebra's own "Allgemein"
-  // tab). Sprache/Runden/Schriftgröße are wired to the real engine;
-  // Koordinaten/Winkeleinheit have no public API hook and stay display-only. ---
-  function openSettings() {
-    closeAllOverlays();
-    settingsOverlay.classList.add("open");
-  }
+  // ---------------- settings ----------------
+  function openSettings() { closeAllOverlays(); settingsOverlay.classList.add("open"); }
   document.getElementById("settingsItem").addEventListener("click", openSettings);
-  document.getElementById("topGearBtn").addEventListener("click", openSettings);
   document.getElementById("settingsClose").addEventListener("click", closeAllOverlays);
-  settingsOverlay.addEventListener("click", (e) => {
-    if (e.target === settingsOverlay) closeAllOverlays();
-  });
+  settingsOverlay.addEventListener("click", (e) => { if (e.target === settingsOverlay) closeAllOverlays(); });
 
   document.getElementById("settingLanguage").addEventListener("change", (e) => {
-    const lang = e.target.value;
-    if (ggbApplet) ggbApplet.setLanguage(lang);
-    applyLanguage(lang);
+    if (ggbApplet) ggbApplet.setLanguage(e.target.value);
+    applyLanguage(e.target.value);
   });
   document.getElementById("settingRounding").addEventListener("change", (e) => {
-    if (ggbApplet) ggbApplet.setRounding(Number(e.target.value));
+    if (ggbApplet) ggbApplet.setRounding(e.target.value);
   });
-  document.getElementById("settingFontSize").addEventListener("change", (e) => {
-    if (ggbApplet) ggbApplet.setFont(Number(e.target.value));
-  });
+  // Coordinates / Angle Unit / Font Size: no public GgbAPI setter exists for
+  // any of these in the source (kernel.setCoordStyle / kernel.setAngleUnit
+  // are internal-only, and the only public "font" call - setFont(label,
+  // size, bold, italic, serif) in DefaultExportedApi.java - sets a single
+  // labeled object's font, not an applet-wide size) - all three fields are
+  // kept for visual fidelity but stay display-only.
 
-  // ---------------- icon rail: switch the real perspective ----------------
-  const railItems = document.querySelectorAll(".rail-item");
-  railItems.forEach((btn) => {
+  // ---------------- icon rail ----------------
+  const navRail = document.getElementById("navRail");
+  const railAlgebra = document.getElementById("railAlgebra");
+  const railTools = document.getElementById("railTools");
+  [railAlgebra, railTools].forEach((btn) => {
     btn.addEventListener("click", () => {
-      railItems.forEach((b) => b.classList.remove("active"));
+      [railAlgebra, railTools].forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       const code = btn.dataset.perspective;
-      if (ggbApplet && code) {
-        ggbApplet.setPerspective(code);
-      }
+      // NavigationRail's real handlers (openAlgebra/openTools) are internal
+      // ToolbarPanel calls with no public-API equivalent; setPerspective()
+      // approximates the same visual result (hide/show the algebra list).
+      if (ggbApplet && code) ggbApplet.setPerspective(code);
+    });
+  });
+  [document.getElementById("railTable"), document.getElementById("railSpreadsheet")].forEach((btn) => {
+    btn.addEventListener("click", () => showToast(dict().rail_disabled_note));
+  });
+
+  // ---------------- calculator switcher (real switchCalculator API) --------
+  // SuiteSubApp enum, org.geogebra.common.SuiteSubApp - fixed real order/codes
+  const SUITE_APPS = {
+    graphing: { icon: "assets/icons/picker-graphing.svg", key: "picker_graphing" },
+    "3d": { icon: "assets/icons/picker-3d.svg", key: "picker_3d" },
+    geometry: { icon: "assets/icons/picker-geometry.svg", key: "picker_geometry" },
+    cas: { icon: "assets/icons/picker-cas.svg", key: "picker_cas" },
+    probability: { icon: "assets/icons/picker-probability.svg", key: "picker_probability" },
+    scientific: { icon: "assets/icons/picker-calculator.svg", key: "picker_calculator" }
+  };
+  let currentAppCode = "graphing";
+  const pickerScreenItems = document.querySelectorAll(".picker-item");
+  const appPickerIcon = document.getElementById("appPickerIcon");
+  const appPickerLabel = document.getElementById("appPickerLabel");
+
+  function openPicker() { closeAllOverlays(); pickerScreen.classList.add("open"); }
+  document.getElementById("switchCalcItem").addEventListener("click", openPicker);
+  document.getElementById("switchCalcItemExam").addEventListener("click", openPicker);
+  document.getElementById("appPickerPill").addEventListener("click", openPicker);
+  document.getElementById("pickerClose").addEventListener("click", closeAllOverlays);
+
+  pickerScreenItems.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const code = btn.dataset.app;
+      pickerScreenItems.forEach((b) => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      currentAppCode = code;
+      appPickerIcon.src = SUITE_APPS[code].icon;
+      appPickerLabel.textContent = dict()[SUITE_APPS[code].key];
+      // Real, if undocumented, public embedding-API call - the same method
+      // CalculatorSwitcherDialog/AppSwitcherPopup use internally
+      // (AppWFull#switchToSubapp via GgbAPIW#switchCalculator). Flag: this
+      // isn't on GeoGebra's official documented API page and could change.
+      if (ggbApplet && ggbApplet.switchCalculator) ggbApplet.switchCalculator(code);
+      closeAllOverlays();
     });
   });
 
-  // ---------------- exam mode: active state (navigation rail turns teal,
-  // timer starts) — mirrors NavigationRail's examOk state + GlobalHeader's
-  // timer/exam-info-button pairing from the real source. The underlying OS
-  // restriction (Guided Access / flight mode) can never really be enforced
-  // from a browser — clicking "Ja" here only simulates GeoGebra's own
-  // reaction to iOS having granted it. ----------------
-  const iconRail = document.getElementById("iconRail");
-  const topGearBtn = document.getElementById("topGearBtn");
-  const examTopPanel = document.getElementById("examTopPanel");
-  const examTopTimerEl = document.getElementById("examTopTimer");
-  const examMenuIcon = document.getElementById("examMenuIcon");
-  const examMenuLabel = document.getElementById("examMenuLabel");
+  // ---------------- exam mode ----------------
+  // ExamController state, mirrored client-side: IDLE -> ACTIVE -> IDLE.
+  let examActive = false;
+  let examCheating = false;
   let examTimerHandle = null;
   let examSecondsElapsed = 0;
   let examStartDate = null;
+  const examEvents = [];
+
+  const examPanel = document.getElementById("examPanel");
+  const headerButtons = document.getElementById("headerButtons");
+  const examTimerEl = document.getElementById("examTimer");
 
   function formatDuration(totalSeconds) {
     const h = Math.floor(totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
-    if (h > 0) {
-      return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-    }
+    if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     return `${m}:${String(s).padStart(2, "0")}`;
   }
-
-  function formatDate(d) {
-    return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`;
+  // ExamController#getDurationFormatted -> "\j \F \Y" / "\H:\i:\s" style
+  function formatLongDate(d) {
+    const locale = currentLang === "de" ? "de-DE" : "en-US";
+    return d ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(d) : "–";
+  }
+  function formatClockTime(d) {
+    const locale = currentLang === "de" ? "de-DE" : "en-US";
+    return d ? new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(d) : "–";
   }
 
-  function formatTime(d) {
-    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  }
-
-  // drawer's exam item mirrors the real File menu: "Prüfungsmodus" (start)
-  // while no exam runs, "Prüfung beenden" (exam_menu_exit, sign-out icon)
-  // while one is active — see FileMenuW/ExitExamAction in the source.
-  function updateExamMenuItem() {
-    const dict = I18N[currentLang];
-    if (examTimerHandle) {
-      examMenuIcon.src = "assets/icons/signout.svg";
-      examMenuLabel.textContent = dict.item_exam_end;
-    } else {
-      examMenuIcon.src = "assets/icons/hourglass.svg";
-      examMenuLabel.textContent = dict.item_exam;
-    }
-  }
+  document.getElementById("examStartItem").addEventListener("click", () => {
+    closeAllOverlays();
+    examStartOverlay.classList.add("open");
+  });
+  document.getElementById("examStartCancel").addEventListener("click", closeAllOverlays);
+  document.getElementById("examStartConfirm").addEventListener("click", () => {
+    closeAllOverlays();
+    startExam();
+  });
 
   function startExam() {
+    // StartExamAction#showExamDialog: app.fileNew() + examController.startExam()
+    if (ggbApplet) ggbApplet.reset();
+    examActive = true;
+    examCheating = false;
     examSecondsElapsed = 0;
     examStartDate = new Date();
-    examTopTimerEl.textContent = formatDuration(0);
-    iconRail.classList.add("exam-active");
-    // mirrors GlobalHeader.addExamTimer: normal header buttons hide, the
-    // exam panel (timer + info button) takes their place instead
-    topGearBtn.hidden = true;
-    examTopPanel.hidden = false;
+    examEvents.length = 0;
+    examEvents.push({ seconds: 0, key: "exam_started" });
+
+    navRail.classList.add("exam-ok");
+    headerButtons.hidden = true;
+    examPanel.hidden = false;
+    examTimerEl.textContent = formatDuration(0);
+    updateExamDrawerVisibility();
+
+    const shell = document.getElementById("appShell");
+    if (shell.requestFullscreen) shell.requestFullscreen().catch(() => {});
+
     examTimerHandle = setInterval(() => {
       examSecondsElapsed += 1;
       const formatted = formatDuration(examSecondsElapsed);
-      examTopTimerEl.textContent = formatted;
-      if (examLogOverlay.classList.contains("open")) {
-        document.getElementById("examLogDuration").textContent = formatted;
-      }
+      examTimerEl.textContent = formatted;
+      const liveEl = document.getElementById("examLogLiveDuration");
+      if (liveEl) liveEl.textContent = formatted;
     }, 1000);
-    updateExamMenuItem();
   }
 
   function endExam() {
     clearInterval(examTimerHandle);
     examTimerHandle = null;
-    iconRail.classList.remove("exam-active");
-    topGearBtn.hidden = false;
-    examTopPanel.hidden = true;
-    updateExamMenuItem();
+    examActive = false;
+    navRail.classList.remove("exam-ok", "exam-cheat");
+    headerButtons.hidden = false;
+    examPanel.hidden = true;
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    updateExamDrawerVisibility();
   }
 
-  function showExamFeedback() {
-    const dict = I18N[currentLang];
-    const now = new Date();
-    document.getElementById("examFeedbackCalcType").textContent = dict.picker_graphing;
-    document.getElementById("examFeedbackStatus").textContent = dict.exam_status_ok;
-    document.getElementById("examFeedbackDuration").textContent = formatDuration(examSecondsElapsed);
-    document.getElementById("examFeedbackDate").textContent = examStartDate ? formatDate(examStartDate) : "–";
-    document.getElementById("examFeedbackStart").textContent = examStartDate ? formatTime(examStartDate) : "–";
-    document.getElementById("examFeedbackEnd").textContent = formatTime(now);
+  function markCheating() {
+    if (!examActive || examCheating) return;
+    examCheating = true;
+    examEvents.push({ seconds: examSecondsElapsed, key: "exam_left_app" });
+    navRail.classList.remove("exam-ok");
+    navRail.classList.add("exam-cheat");
+  }
+  // ExamUtil#addVisibilityAndBlurHandlers: flags leaving the tab/window
+  // during an active exam. Real source doesn't expose the exact event
+  // vocabulary, so the "left app" line is our own honest label, not a
+  // quoted source string.
+  document.addEventListener("visibilitychange", () => { if (document.hidden) markCheating(); });
+  window.addEventListener("blur", markCheating);
+
+  document.getElementById("examExitItem").addEventListener("click", () => {
     closeAllOverlays();
-    examFeedbackOverlay.classList.add("open");
+    examExitOverlay.classList.add("open");
+  });
+  document.getElementById("examExitCancel").addEventListener("click", closeAllOverlays);
+  document.getElementById("examExitConfirm").addEventListener("click", () => {
+    closeAllOverlays();
+    openExamLogDialog("summary");
+  });
+
+  document.getElementById("examInfoBtn").addEventListener("click", () => {
+    closeAllOverlays();
+    openExamLogDialog("log");
+  });
+  document.getElementById("examLogItem").addEventListener("click", () => {
+    closeAllOverlays();
+    openExamLogDialog("log");
+  });
+
+  function row(label, value) {
+    return `<div class="exam-log-row"><span class="exam-log-label">${label}</span><span class="exam-log-value">${value}</span></div>`;
   }
 
-  // tapping the info button in the exam panel opens the "log" variant of the
-  // same dialog WHILE the exam keeps running (ExamLogAndExitDialog(app, true,
-  // ...) via GuiManagerW.showExamInfoDialog) — no teacher line, no end time,
-  // just a live running duration; its "OK" button only closes the dialog.
-  function showExamLog() {
-    const dict = I18N[currentLang];
-    document.getElementById("examLogCalcType").textContent = dict.picker_graphing;
-    document.getElementById("examLogStatus").textContent = dict.exam_status_ok;
-    document.getElementById("examLogDate").textContent = examStartDate ? formatDate(examStartDate) : "–";
-    document.getElementById("examLogStart").textContent = examStartDate ? formatTime(examStartDate) : "–";
-    document.getElementById("examLogDuration").textContent = formatDuration(examSecondsElapsed);
+  function buildActivityLog() {
+    const d = dict();
+    return examEvents.map((ev) => `${formatDuration(ev.seconds)} ${d[ev.key]}`).join("\n");
+  }
+
+  function openExamLogDialog(variant) {
+    const d = dict();
+    document.getElementById("examLogCalcType").textContent = d[SUITE_APPS[currentAppCode].key];
+    document.getElementById("examLogStatus").textContent = `${d.item_exam}: ${examCheating ? d.exam_alert : "OK"}`;
+    document.getElementById("examAlertIcon").hidden = !examCheating;
+    document.getElementById("examLogTitlePanel").classList.toggle("cheating", examCheating);
+
+    let html = "";
+    if (variant === "summary") {
+      html += `<p class="exam-log-teacher">${d.exam_log_show_screen_to_teacher}</p>`;
+      html += row(d.Duration, formatDuration(examSecondsElapsed));
+      html += row(d.exam_start_date, formatLongDate(examStartDate));
+      html += row(d.exam_start_time, formatClockTime(examStartDate));
+      html += row(d.exam_end_time, formatClockTime(new Date()));
+    } else {
+      html += row(d.exam_start_date, formatLongDate(examStartDate));
+      html += row(d.exam_start_time, formatClockTime(examStartDate));
+      html += `<div class="exam-log-row"><span class="exam-log-label">${d.Duration}</span><span class="exam-log-value" id="examLogLiveDuration">${formatDuration(examSecondsElapsed)}</span></div>`;
+    }
+    if (examCheating) {
+      html += `<pre class="exam-log-activity">${buildActivityLog()}</pre>`;
+    }
+    document.getElementById("examLogContent").innerHTML = html;
+
+    const okBtn = document.getElementById("examLogOk");
+    okBtn.textContent = variant === "summary" ? d.btn_exit : d.btn_ok;
+    okBtn.onclick = variant === "summary" ? () => { closeAllOverlays(); endExam(); } : closeAllOverlays;
+
     closeAllOverlays();
     examLogOverlay.classList.add("open");
   }
-  document.getElementById("examInfoBtn").addEventListener("click", showExamLog);
-  document.getElementById("examLogOk").addEventListener("click", closeAllOverlays);
-
-  document.getElementById("iosAlertNo").addEventListener("click", closeAllOverlays);
-  function advanceFromIosAlert() {
-    closeAllOverlays();
-    startExam();
-  }
-  document.getElementById("iosAlertYes").addEventListener("click", advanceFromIosAlert);
-  // Same click-outside-advances affordance as the prep dialog above.
-  iosAlertOverlay.addEventListener("click", (e) => {
-    if (e.target === iosAlertOverlay) advanceFromIosAlert();
-  });
-
-  document.getElementById("examExitCancel").addEventListener("click", closeAllOverlays);
-  document.getElementById("examExitConfirm").addEventListener("click", () => {
-    // real flow: confirming exit shows the exam log/feedback screen first
-    // ("Zeige diesen Bildschirm deiner Lehrkraft" + duration/date/times);
-    // the exam only actually ends once that screen is acknowledged.
-    showExamFeedback();
-  });
-  document.getElementById("examFeedbackOk").addEventListener("click", () => {
-    closeAllOverlays();
-    endExam();
-  });
 
   applyLanguage("de");
 })();
